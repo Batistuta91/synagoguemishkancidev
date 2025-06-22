@@ -1,682 +1,2387 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
+
 <html lang="he" dir="rtl">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>בית כנסת משכן סידב</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
-    <style>
-        /* --- משתני עיצוב גלובליים --- */
-        :root {
-            --primary-color: #0d47a1;
-            --secondary-color: #1976d2;
-            --accent-color: #e3f2fd;
-            --text-color: #333333;
-            --light-text-color: #f7f9fc;
-            --background-color: #f7f9fc;
-            --card-background: #ffffff;
-            
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --border-radius-sm: 8px;
-            --border-radius-md: 16px;
-            
-            --transition-default: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
+    <meta charset="UTF-8">
 
-        /* --- איפוס ועיצוב בסיסי --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Heebo', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.7;
-            font-size: 16px;
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* --- טיפוגרפיה וכותרות --- */
-        h1, h2, h3, h4, p { text-align: center; }
-        h1 { font-size: 2.8rem; color: var(--light-text-color); text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
-        h2 { font-size: 2.2rem; margin-bottom: 2rem; color: var(--primary-color); }
-        h3 { font-size: 1.5rem; color: var(--secondary-color); margin-bottom: 1rem; }
-        p { margin-bottom: 1rem; max-width: 800px; margin-left: auto; margin-right: auto; }
+    <title>בית כנסת משכן סידב</title>
 
-        /* --- כותרת עליונה וניווט --- */
-        .site-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--light-text-color);
-            padding: 4rem 1rem;
-            text-align: center;
-            position: relative;
-        }
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-        .main-nav {
-            background-color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        .main-nav a {
-            color: var(--light-text-color);
-            padding: 0.75rem 1rem;
-            text-decoration: none;
-            border-radius: var(--border-radius-sm);
-            transition: var(--transition-default);
-            font-weight: 500;
-        }
-        .main-nav a:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
+    <style>
 
-        /* --- מבנה כללי --- */
-        main { padding: 2rem 1rem; }
-        section { max-width: 1200px; margin: 0 auto 4rem auto; }
-        .card {
-            background: var(--card-background);
-            border-radius: var(--border-radius-md);
-            padding: 2.5rem;
-            box-shadow: var(--shadow-md);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card:hover { transform: translateY(-5px); }
-        .card p { color: var(--text-color); }
+        :root {
 
-        /* --- רשימת זמנים (תפילות, יום, שבת) --- */
-        .zmanim-grid {
-            list-style: none;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            text-align: right;
-        }
-        .zmanim-grid li {
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-            color: var(--light-text-color);
-            padding: 1.25rem;
-            border-radius: var(--border-radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 1.1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition-default);
-        }
-        .zmanim-grid li:hover { transform: scale(1.03); box-shadow: var(--shadow-md); }
+            --primary-color: #1a365d;
 
-        /* --- תוכן דינמי (הלכה, ציטוט וכו') --- */
-        .dynamic-content-box {
-            background-color: var(--accent-color);
-            border-right: 5px solid var(--secondary-color);
-            padding: 1.5rem;
-            border-radius: var(--border-radius-sm);
-            text-align: center;
-        }
-        .dynamic-content-box p {
-            min-height: 60px; /* גובה מינימלי למניעת קפיצות בזמן טעינה */
-        }
+            --secondary-color: #2c5282;
 
-        /* --- שלד טעינה --- */
-        .skeleton { animation: skeleton-loading 1s linear infinite alternate; }
-        @keyframes skeleton-loading {
-            0% { background-color: #e0e0e0; }
-            100% { background-color: #f0f0f0; }
-        }
-        .skeleton-text { width: 100%; height: 1.2rem; margin-bottom: 0.5rem; border-radius: 4px; }
-        .skeleton-text:last-child { width: 80%; }
+            --accent-color: #e2e8f0;
 
-        /* --- לוח שנה --- */
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .calendar-header h3 { margin: 0; }
-        #current-month { font-size: 1.8rem; font-weight: 700; }
-        .calendar-nav button {
-            background: none; border: 2px solid var(--primary-color); color: var(--primary-color);
-            width: 45px; height: 45px; border-radius: 50%; cursor: pointer;
-            transition: var(--transition-default); font-size: 1.5rem;
-        }
-        .calendar-nav button:hover { background: var(--primary-color); color: var(--light-text-color); }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
-        .weekday { text-align: center; font-weight: 700; padding: 0.5rem; background: var(--accent-color); border-radius: var(--border-radius-sm); }
-        .calendar-day {
-            text-align: center; padding: 1rem 0.5rem; background: var(--card-background);
-            border: 1px solid #eee; border-radius: var(--border-radius-sm);
-            transition: var(--transition-default); position: relative; cursor: pointer;
-        }
-        .calendar-day:not(.empty):hover { background: var(--accent-color); transform: scale(1.05); }
-        .calendar-day.has-events::after {
-            content: ''; position: absolute; bottom: 8px; left: 50%;
-            transform: translateX(-50%); width: 6px; height: 6px;
-            background-color: var(--secondary-color); border-radius: 50%;
-        }
-        #events-panel { margin-top: 2rem; text-align: right; }
-        #events-list li { background: #f0f4f8; padding: 0.75rem 1rem; border-radius: var(--border-radius-sm); margin-bottom: 0.5rem; }
+            --text-color: #2d3748;
 
-        /* --- וידאו וגלריה --- */
-        .media-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
-            max-width: 100%;
-            background: #000;
-            border-radius: var(--border-radius-sm);
-        }
-        .media-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
-        .gallery-grid img { width: 100%; height: 200px; object-fit: cover; border-radius: var(--border-radius-sm); }
+            --background-color: #f7fafc;
 
-        /* --- טופס צור קשר --- */
-        .contact-form { display: grid; gap: 1.5rem; text-align: right; }
-        .form-group { display: flex; flex-direction: column; }
-        .contact-form label { margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color); }
-        .contact-form input, .contact-form textarea {
-            width: 100%; padding: 0.75rem 1rem; border: 1px solid #ccc;
-            border-radius: var(--border-radius-sm); font-family: 'Heebo', sans-serif;
-            transition: var(--transition-default);
-        }
-        .contact-form input:focus, .contact-form textarea:focus {
-            outline: none; border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px var(--accent-color);
-        }
-        .btn {
-            background-color: var(--primary-color); color: var(--light-text-color); border: none;
-            padding: 0.75rem 1.5rem; border-radius: var(--border-radius-sm); cursor: pointer;
-            font-size: 1.1rem; font-weight: 700; transition: var(--transition-default);
-            text-align: center; text-decoration: none; display: inline-block;
-        }
-        .btn:hover { background-color: var(--secondary-color); transform: translateY(-2px); }
-        .btn-whatsapp { background-color: #25D366; }
-        .btn-whatsapp:hover { background-color: #128C7E; }
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-        /* --- פוטר וכפתורים --- */
-        .site-footer {
-            background-color: var(--primary-color); color: var(--light-text-color);
-            text-align: center; padding: 2rem 1rem; margin-top: 3rem;
-        }
-        .menu-toggle { display: none; }
-        #scrollTopBtn {
-            position: fixed; bottom: 20px; right: 20px; display: none;
-            background-color: var(--secondary-color); color: var(--light-text-color); border: none;
-            width: 50px; height: 50px; border-radius: 50%; cursor: pointer; z-index: 1001;
-            font-size: 1.5rem; box-shadow: var(--shadow-md); transition: var(--transition-default);
-        }
-        #scrollTopBtn:hover { background-color: var(--primary-color); transform: scale(1.1); }
-        
-        /* --- מודאל וחלונות קופצים --- */
-        .modal {
-            display: none; position: fixed; z-index: 2000; left: 0; top: 0;
-            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);
-            align-items: center; justify-content: center;
-        }
-        .modal-content {
-            background-color: #fefefe; margin: auto; padding: 30px;
-            border: 1px solid #888; width: 90%; max-width: 500px;
-            border-radius: var(--border-radius-md); text-align: center;
-        }
-        .modal-content .close { color: #aaa; float: left; font-size: 28px; font-weight: bold; cursor: pointer; }
-        
-        #rosh-chodesh-alert {
-            display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #fff3e0; color: #e65100; padding: 20px; border: 1px solid #e65100;
-            border-radius: var(--border-radius-sm); box-shadow: var(--shadow-md); z-index: 1500;
-            max-width: 90%;
-        }
-        #rosh-chodesh-alert button {
-            background: #e65100; color: white; border: none; padding: 5px 10px;
-            border-radius: 5px; cursor: pointer; margin-top: 10px;
-        }
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
 
-        /* --- רספונסיביות --- */
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            h2 { font-size: 1.8rem; }
-            .card { padding: 1.5rem; }
-            .main-nav { gap: 0; }
+            --transition-default: all 0.3s ease;
 
-            .menu-toggle {
-                display: block; position: fixed; top: 1rem; left: 1rem; font-size: 1.8rem;
-                background: var(--primary-color); padding: 5px 10px; border-radius: var(--border-radius-sm);
-                color: var(--light-text-color); border: none; cursor: pointer; z-index: 1002;
-            }
-            .main-nav {
-                position: fixed; top: 0; right: -100%; width: 80%; height: 100vh;
-                background: var(--primary-color); flex-direction: column; justify-content: flex-start;
-                align-items: stretch; padding-top: 5rem; transition: right 0.4s ease-in-out;
-            }
-            .main-nav.active { right: 0; }
-            .main-nav a { padding: 1.2rem; text-align: right; border-bottom: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0; }
-        }
-    </style>
+            --menu-background: rgba(26, 54, 93, 0.95);
+
+        }
+
+
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+
+
+        body {
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            background-color: var(--background-color);
+
+            color: var(--text-color);
+
+            direction: rtl;
+
+            line-height: 1.6;
+
+        }
+
+
+
+        header {
+
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+
+            color: white;
+
+            text-align: center;
+
+            padding: 3rem 1rem;
+
+            box-shadow: var(--shadow-md);
+
+            position: relative;
+
+            z-index: 1;
+
+        }
+
+
+
+        header h1 {
+
+            font-size: 2.5rem;
+
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+
+            text-align: center;
+
+        }
+
+
+
+        nav {
+
+            background-color: var(--primary-color);
+
+            padding: 1rem;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+            box-shadow: var(--shadow-sm);
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 2rem;
+
+        }
+
+
+
+        nav a {
+
+            color: white;
+
+            padding: 10px 15px;
+
+            text-decoration: none;
+
+            transition: var(--transition-default);
+
+            border-radius: 5px;
+
+        }
+
+
+
+        nav a:hover {
+
+            background-color: var(--secondary-color);
+
+            color: white;
+
+        }
+
+
+
+        section {
+
+            max-width: 1200px;
+
+            margin: 2rem auto;
+
+            padding: 0 1rem;
+
+        }
+
+
+
+        .card {
+
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 2rem;
+
+            margin: 2rem 0;
+
+            box-shadow: var(--shadow-sm);
+
+            transition: var(--transition-default);
+
+        }
+
+
+
+        .card:hover {
+
+            box-shadow: var(--shadow-md);
+
+        }
+
+
+
+        .zmanim-list {
+
+            list-style: none;
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+            gap: 1rem;
+
+            padding: 0;
+
+        }
+
+
+
+        .zmanim-list li {
+
+            background-color: var(--primary-color);
+
+            padding: 1rem;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            transition: var(--transition-default);
+
+            color: white;
+
+        }
+
+
+
+        .zmanim-list li:hover {
+
+            background-color: var(--secondary-color);
+
+        }
+
+
+
+        .calendar-container {
+
+            max-width: 1200px;
+
+            margin: 2rem auto;
+
+            padding: 1rem;
+
+            background: white;
+
+            border-radius: 10px;
+
+            box-shadow: var(--shadow-sm);
+
+        }
+
+
+
+        .calendar-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 1rem;
+
+            padding: 1rem;
+
+            background: var(--primary-color);
+
+            color: white;
+
+            border-radius: 5px;
+
+        }
+
+
+
+        .calendar-header h2, #current-month {
+
+            color: white;
+
+            font-size: 1.8rem;
+
+            font-weight: bold;
+
+            text-align: center;
+
+            margin: 0;
+
+        }
+
+
+
+        .calendar-nav button {
+
+            background: white;
+
+            color: var(--primary-color);
+
+            border: none;
+
+            padding: 0.5rem 1rem;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+            transition: var(--transition-default);
+
+            font-weight: bold;
+
+        }
+
+
+
+        .calendar-nav button:hover {
+
+            background: var(--accent-color);
+
+        }
+
+
+
+        .calendar-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(7, 1fr);
+
+            gap: 10px;
+
+            margin-top: 1rem;
+
+        }
+
+
+
+        .weekday {
+
+            text-align: center;
+
+            font-weight: bold;
+
+            font-size: 1rem;
+
+            color: white;
+
+            padding: 0.5rem;
+
+            background: var(--primary-color);
+
+            border-radius: 5px;
+
+        }
+
+
+
+        .calendar-day {
+
+            text-align: center;
+
+            padding: 1rem;
+
+            background: var(--accent-color);
+
+            color: var(--text-color);
+
+            border: 1px solid var(--primary-color);
+
+            border-radius: 5px;
+
+            transition: var(--transition-default);
+
+            position: relative;
+
+            min-height: 60px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+
+
+        .calendar-day.has-events {
+
+            background: var(--secondary-color);
+
+            color: white;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .calendar-day:hover {
+
+            background: var(--primary-color);
+
+            color: white;
+
+        }
+
+
+
+        .events-panel {
+
+            background: white;
+
+            padding: 1rem;
+
+            border-radius: 5px;
+
+            margin-top: 1rem;
+
+        }
+
+
+
+        .events-panel h3 {
+
+            color: var(--primary-color);
+
+            font-size: 1.5rem;
+
+            margin-bottom: 1rem;
+
+            text-align: center;
+
+        }
+
+
+
+        .events-list {
+
+            list-style: none;
+
+            padding: 0;
+
+            margin: 0;
+
+        }
+
+
+
+        .events-list li {
+
+            padding: 0.8rem;
+
+            border-bottom: 1px solid var(--accent-color);
+
+            font-size: 1rem;
+
+            background: white;
+
+            color: var(--text-color);
+
+            margin: 0.5rem 0;
+
+            border-radius: 5px;
+
+            transition: var(--transition-default);
+
+        }
+
+
+
+        .events-list li:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+
+        .events-list li:hover {
+
+            background-color: var(--accent-color);
+
+            color: var(--primary-color);
+
+        }
+
+
+
+        #rss-news-list, #halacha-content, #quote-content {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+            background: var(--primary-color);
+
+            padding: 15px;
+
+            border-radius: 5px;
+
+            transition: var(--transition-default);
+
+            cursor: pointer;
+
+            color: white;
+
+            margin: 1rem 0;
+
+        }
+
+
+
+        #rss-news-list li {
+
+            background: white;
+
+            color: var(--text-color);
+
+            padding: 10px;
+
+            border-radius: 5px;
+
+            transition: var(--transition-default);
+
+        }
+
+
+
+        #rss-news-list li:hover, #halacha-content:hover, #quote-content:hover {
+
+            background: var(--secondary-color);
+
+            color: white;
+
+        }
+
+
+
+        footer {
+
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+
+            color: white;
+
+            text-align: center;
+
+            padding: 2rem 1rem;
+
+            margin-top: 2rem;
+
+        }
+
+
+
+        button.menu-toggle {
+
+            display: none;
+
+            font-size: 2rem;
+
+            background-color: var(--primary-color);
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 15px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            box-shadow: var(--shadow-sm);
+
+            transition: var(--transition-default);
+
+        }
+
+
+
+        @media (max-width: 768px) {
+
+            body {
+
+                padding-top: 60px;
+
+            }
+
+
+
+            button.menu-toggle {
+
+                display: block;
+
+                position: fixed;
+
+                top: 1rem;
+
+                right: 1rem;
+
+                z-index: 1001;
+
+            }
+
+
+
+            nav {
+
+                position: fixed;
+
+                top: 0;
+
+                right: -100%;
+
+                width: 100%;
+
+                height: 100vh;
+
+                background: var(--menu-background);
+
+                flex-direction: column;
+
+                justify-content: flex-start;
+
+                align-items: center;
+
+                padding-top: 5rem;
+
+                overflow-y: auto;
+
+                transition: var(--transition-default);
+
+                box-sizing: border-box;
+
+            }
+
+
+
+            html, body {
+
+                overflow-x: hidden;
+
+            }
+
+
+
+            nav.active {
+
+                right: 0;
+
+            }
+
+
+
+            nav a {
+
+                width: 90%;
+
+                margin: 0.5rem auto;
+
+                text-align: center;
+
+                font-size: 1.2rem;
+
+                padding: 1rem;
+
+                background: rgba(255, 255, 255, 0.1);
+
+                border-radius: 5px;
+
+            }
+
+
+
+            nav a:hover {
+
+                background: rgba(255, 255, 255, 0.2);
+
+            }
+
+
+
+            .calendar-grid {
+
+                gap: 5px;
+
+            }
+
+
+
+            .calendar-day {
+
+                padding: 0.5rem;
+
+                font-size: 0.9rem;
+
+                min-height: 45px;
+
+            }
+
+
+
+            .weekday {
+
+                font-size: 0.8rem;
+
+                padding: 0.3rem;
+
+            }
+
+
+
+            header h1 {
+
+                font-size: 1.8rem;
+
+            }
+
+
+
+            .calendar-header h2, #current-month {
+
+                font-size: 1.3rem;
+
+            }
+
+
+
+            .calendar-header {
+
+                flex-direction: column;
+
+                gap: 1rem;
+
+            }
+
+
+
+            .calendar-nav {
+
+                width: 100%;
+
+                display: flex;
+
+                justify-content: space-between;
+
+            }
+
+
+
+            .calendar-nav button {
+
+                width: 45%;
+
+            }
+
+
+
+            .events-list li {
+
+                padding: 0.5rem;
+
+                font-size: 0.9rem;
+
+            }
+
+
+
+            section {
+
+                padding: 0 0.5rem;
+
+            }
+
+
+
+            .card {
+
+                padding: 1rem;
+
+                margin: 1rem 0;
+
+            }
+
+
+
+            .zmanim-list {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+
+
+        /* Center all headers */
+
+        h1, h2, h3 {
+
+            text-align: center;
+
+        }
+
+
+
+        .card h2, .card h3 {
+
+            color: var(--secondary-color);
+
+        }
+
+
+
+        #halacha-text, #halacha-content p {
+
+            color: var(--text-color);
+
+            background-color: var(--accent-color);
+
+            padding: 10px;
+
+            border-radius: 5px;
+
+        }
+
+
+
+        #contact label {
+
+            color: var(--primary-color);
+
+        }
+
+
+
+        #contact input, #contact textarea {
+
+            background-color: var(--accent-color);
+
+            color: var(--primary-color);
+
+            border: 1px solid var(--secondary-color);
+
+        }
+
+
+
+        #contact button {
+
+            background-color: var(--secondary-color);
+
+            color: white;
+
+        }
+
+
+
+        #donate h2 {
+
+            color: var(--secondary-color);
+
+        }
+
+
+
+        #donate p {
+
+            color: var(--primary-color);
+
+        }
+
+
+
+        #donate button {
+
+            background-color: var(--secondary-color);
+
+            color: white;
+
+        }
+
+
+
+        #prayers h2, #zmanim h2, #videos h2, #gallery h2, #daily-quote h2, #news h2 {
+
+            color: var(--secondary-color);
+
+        }
+
+
+
+        #halacha-content p {
+
+            color: white;
+
+            background-color: var(--secondary-color);
+
+            padding: 10px;
+
+            border-radius: 5px;
+
+        }
+
+
+
+        #quote-content {
+
+            display: block !important;
+
+            color: white !important;
+
+            background-color: var(--secondary-color);
+
+            padding: 20px;
+
+            border-radius: 8px;
+
+            text-align: center;
+
+            font-size: 1.2rem;
+
+            line-height: 1.5;
+
+        }
+
+
+
+        #quote-content h3 {
+
+            color: var(--accent-color);
+
+            margin-bottom: 10px;
+
+        }
+
+
+
+        #quote-content p {
+
+            color: white;
+
+            margin: 0;
+
+        }
+
+
+
+        #contact input, #contact textarea {
+
+            color: var(--text-color);
+
+        }
+
+
+
+        #contact input:focus, #contact textarea:focus {
+
+            outline: 2px solid var(--secondary-color);
+
+        }
+
+
+
+        #news h2, #rss-news-list li {
+
+            color: var(--text-color);
+
+        }
+
+
+
+        #rss-news-list li a {
+
+            color: var(--primary-color);
+
+        }
+
+
+
+        #rss-news-list li:hover {
+
+            background-color: var(--accent-color);
+
+            color: var(--primary-color);
+
+        }
+
+
+
+        #halacha-content, #halacha-content * {
+
+            color: white !important;
+
+            background-color: var(--secondary-color);
+
+            padding: 10px;
+
+            border-radius: 5px;
+
+        }
+
+
+
+        #psalms-content {
+
+            display: block;
+
+            background-color: var(--accent-color);
+
+            color: var(--text-color);
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+            font-size: 1rem;
+
+            line-height: 1.5;
+
+            box-shadow: var(--shadow-sm);
+
+            margin-top: 1rem;
+
+        }
+
+
+
+        #rosh-chodesh-alert {
+
+            display: none;
+
+            position: fixed;
+
+            top: 20px;
+
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            background: #fff5f5;
+
+            color: #c53030;
+
+            padding: 20px;
+
+            border: 1px solid #c53030;
+
+            border-radius: 8px;
+
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+            z-index: 1000;
+
+        }
+
+
+
+        #rosh-chodesh-alert span {
+
+            font-weight: bold;
+
+            font-size: 1.2rem;
+
+        }
+
+
+
+        #rosh-chodesh-text {
+
+            margin: 10px 0;
+
+        }
+
+
+
+        #rosh-chodesh-alert button {
+
+            background: #c53030;
+
+            color: white;
+
+            border: none;
+
+            padding: 5px 10px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+        }
+
+    </style>
+
 </head>
+
 <body>
 
-    <header class="site-header">
-        <h1>בית כנסת משכן סידב</h1>
-        <p>מקום של תורה, תפילה וקהילה</p>
-    </header>
+    <header>
 
-    <button class="menu-toggle" aria-label="פתח תפריט">
-        <i class="fas fa-bars"></i>
-    </button>
-    <nav class="main-nav" id="main-nav">
-        <a href="#prayers">זמני תפילות</a>
-        <a href="#daily-halacha">הלכה יומית</a>
-        <a href="#halacha-in-60-seconds">הלכה ב-60 שניות</a>
-        <a href="#daily-quote">ציטוט יומי</a>
-        <a href="#zmanim">זמני היום</a>
-        <a href="#shabbat-times">זמני שבת</a>
-        <a href="#daily-psalms">תהילים יומי</a>
-        <a href="#videos">שיעורי וידאו</a>
-        <a href="#news">חדשות</a>
-        <a href="#events">אירועים</a>
-        <a href="#gallery">גלריה</a>
-        <a href="#contact">צור קשר</a>
-        <a href="#donate">תרומות</a>
-    </nav>
+        <h1>בית כנסת משכן סידב</h1>
 
-    <main>
-        <section id="prayers">
-            <h2><i class="fas fa-clock"></i> זמני תפילות</h2>
-            <div class="card">
-                <ul id="prayers-list" class="zmanim-grid">
-                    <li><div class="skeleton skeleton-text"></div></li>
-                </ul>
-            </div>
-        </section>
+        <p>ברוכים הבאים!</p>
 
-        <section id="daily-content">
-            <h2><i class="fas fa-book-open"></i> תוכן יומי</h2>
-            <div class="card">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
-                    
-                    <div id="daily-halacha" class="dynamic-content-box">
-                        <h3>הלכה יומית</h3>
-                        <p id="halacha-text"><span class="skeleton skeleton-text"></span></p>
-                    </div>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 
-                    <div id="halacha-in-60-seconds" class="dynamic-content-box">
-                        <h3>הלכה ב-60 שניות</h3>
-                        <p id="halacha-60-text"><span class="skeleton skeleton-text"></span></p>
-                    </div>
+        <nav id="main-nav">
 
-                    <div id="daily-quote" class="dynamic-content-box">
-                        <h3>ציטוט יומי</h3>
-                        <p id="quote-content"><span class="skeleton skeleton-text"></span></p>
-                    </div>
+            <a href="#prayers">זמני תפילות</a>
 
-                    <div id="daily-psalms" class="dynamic-content-box">
-                        <h3>תהילים יומי</h3>
-                        <p id="psalms-content"><span class="skeleton skeleton-text"></span></p>
-                    </div>
-                </div>
-            </div>
-        </section>
+            <a href="#daily-halacha">הלכה יומית</a>
 
-        <section id="zmanim">
-            <h2><i class="fas fa-sun"></i> זמני היום (ירושלים)</h2>
-            <div class="card">
-                <ul id="zmanim-list" class="zmanim-grid">
-                     <script>document.write('<li><div class="skeleton skeleton-text"></div></li>'.repeat(16))</script>
-                </ul>
-            </div>
-        </section>
+            <a href="#halacha-in-60-seconds">הלכה בשישים שניות</a>
 
-        <section id="shabbat-times">
-            <h2><i class="fas fa-star-of-david"></i> זמני שבת</h2>
-            <div class="card">
-                <div id="shabbat-times-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; text-align: center;">
-                    </div>
-            </div>
-        </section>
+            <a href="#daily-quote">ציטוט יומי</a>
 
-        <section id="videos">
-            <h2><i class="fas fa-video"></i> שיעורי וידאו</h2>
-            <div class="card">
-                <div class="media-container">
-                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-                </div>
-            </div>
-        </section>
+            <a href="#zmanim">זמני היום</a>
 
-        <section id="events">
-            <h2><i class="fas fa-calendar-alt"></i> לוח אירועים</h2>
-            <div class="card">
-                <div class="calendar-header">
-                    <button class="nav-button" onclick="navigateMonth(-1)" aria-label="חודש קודם">❮</button>
-                    <h3 id="current-month">טוען...</h3>
-                    <button class="nav-button" onclick="navigateMonth(1)" aria-label="חודש הבא">❯</button>
-                </div>
-                <div class="calendar-grid" id="weekdays"></div>
-                <div class="calendar-grid" id="calendar-days"></div>
-                <div id="events-panel" style="display: none;">
-                    <h4>אירועים לתאריך הנבחר:</h4>
-                    <ul class="events-list" id="events-list"></ul>
-                </div>
-            </div>
-        </section>
-        
-        <section id="gallery">
-            <h2><i class="fas fa-images"></i> גלריה</h2>
-            <div class="card">
-                <div class="gallery-grid">
-                    <img src="https://via.placeholder.com/400x300.png?text=תמונה+1" alt="אירוע 1" loading="lazy">
-                    <img src="https://via.placeholder.com/400x300.png?text=תמונה+2" alt="אירוע 2" loading="lazy">
-                    <img src="https://via.placeholder.com/400x300.png?text=תמונה+3" alt="אירוע 3" loading="lazy">
-                </div>
-            </div>
-        </section>
+            <a href="#shabbat-times">זמני שבת</a>
 
-        <section id="news">
-            <h2><i class="fas fa-newspaper"></i> חדשות ועדכונים</h2>
-            <div class="card">
-                <ul id="rss-news-list" style="list-style: none; text-align: right;"></ul>
-            </div>
-        </section>
+            <a href="#daily-psalms">תהילים יומי</a>
 
-        <section id="contact">
-            <h2><i class="fas fa-envelope"></i> צרו קשר</h2>
-            <div class="card">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; align-items: center;">
-                    <form class="contact-form" action="https://formspree.io/f/YOUR_UNIQUE_ID" method="POST">
-                        <div class="form-group">
-                            <label for="name">שם מלא</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">דוא"ל</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">הודעה</label>
-                            <textarea id="message" name="message" rows="5" required></textarea>
-                        </div>
-                        <button type="submit" class="btn">שלח הודעה</button>
-                    </form>
-                    <div style="text-align: center;">
-                        <h3>הצטרפו לקהילה</h3>
-                        <p>הישארו מעודכנים בכל מה שקורה בבית הכנסת דרך קבוצת ה-WhatsApp שלנו.</p>
-                        <a href="https://chat.whatsapp.com/JhJEWl0RXzx7AO1TbvJWTh" target="_blank" class="btn btn-whatsapp">
-                            <i class="fab fa-whatsapp"></i> הצטרפות לקבוצה
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
+            <a href="#videos">שיעורי וידאו</a>
 
-        <section id="donate">
-            <h2><i class="fas fa-heart"></i> תרומות</h2>
-            <div class="card">
-                <p>תרומתכם מסייעת לנו להמשיך בפעילות התורנית והקהילתית הענפה. כל תרומה מתקבלת בברכה.</p>
-                <form action="https://www.paypal.com/donate" method="post" target="_blank">
-                    <input type="hidden" name="business" value="your_paypal_email@example.com">
-                    <input type="hidden" name="currency_code" value="ILS">
-                    <input type="hidden" name="item_name" value="תרומה לבית כנסת משכן סידב">
-                    <button type="submit" class="btn">תרומה מאובטחת</button>
-                </form>
-            </div>
-        </section>
+            <a href="#news">חדשות</a>
 
-    </main>
+            <a href="#events">אירועים</a>
 
-    <footer class="site-footer">
-        <p>&copy; <span id="current-year"></span> בית כנסת משכן סידב. כל הזכויות שמורות.</p>
-    </footer>
+            <a href="#gallery">גלריה</a>
 
-    <button onclick="scrollToTop()" id="scrollTopBtn" title="חזרה למעלה" aria-label="חזרה למעלה">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-    
-    <div id="infoModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3 id="modal-title"></h3>
-            <p id="modal-description"></p>
-        </div>
-    </div>
+            <a href="#contact">צור קשר</a>
 
-    <div id="rosh-chodesh-alert">
-        <span style="font-weight: bold; font-size: 1.2rem;">🔔 תזכורת ראש חודש 🔔</span>
-        <p id="rosh-chodesh-text"></p>
-        <button onclick="closeRoshChodeshAlert()">הבנתי</button>
-    </div>
+            <a href="#donate">תרומות</a>
+
+        </nav>
+
+    </header>
 
 
-    <script>
-    // --- הגדרות ופונקציות עזר ---
-    let currentDate = new Date();
-    let calendarEvents = [];
-    const RSS_PROXY_URL = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
-    async function fetchData(url) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return await response.json();
-        } catch (error) {
-            console.error(`Fetch error for ${url}:`, error);
-            return null;
-        }
-    }
+    <!-- זמני תפילות -->
 
-    // --- טיפול בתפריט נייד ---
-    const menuToggle = document.querySelector('.menu-toggle');
-    const mainNav = document.getElementById('main-nav');
-    menuToggle.addEventListener('click', () => mainNav.classList.toggle('active'));
-    document.querySelectorAll('#main-nav a').forEach(link => {
-        link.addEventListener('click', () => mainNav.classList.remove('active'));
-    });
+    <section id="prayers">
 
-    // --- טיפול בכפתור גלילה למעלה ---
-    const scrollTopBtn = document.getElementById("scrollTopBtn");
-    window.onscroll = () => {
-        scrollTopBtn.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) ? "block" : "none";
-    };
-    const scrollToTop = () => window.scrollTo({ top: 0 });
+        <div class="card">
 
-    // --- מודאל לזמני היום ---
-    const modal = document.getElementById("infoModal");
-    const openModal = (title, description) => {
-        document.getElementById("modal-title").textContent = title;
-        document.getElementById("modal-description").textContent = description;
-        modal.style.display = "flex";
-    }
-    const closeModal = () => modal.style.display = "none";
-    window.onclick = (event) => {
-        if (event.target == modal) closeModal();
-    }
+            <h2>זמני תפילות</h2>
 
-    // --- התראת ראש חודש ---
-    const roshChodeshAlert = document.getElementById('rosh-chodesh-alert');
-    const displayRoshChodeshAlert = (hebrewMonth) => {
-        document.getElementById('rosh-chodesh-text').textContent = `היום ראש חודש ${hebrewMonth}. יש להוסיף "יעלה ויבוא" בתפילות ובברכת המזון. חודש מבורך!`;
-        roshChodeshAlert.style.display = 'block';
-    }
-    const closeRoshChodeshAlert = () => roshChodeshAlert.style.display = 'none';
+            <ul id="prayers-list" class="zmanim-list">
 
-    // --- טעינת תוכן דינמי ---
-    
-    function displayPrayerTimes() {
-        const prayerTimes = [{ day: "ראשון-חמישי", time: "15:00", prayer: "מנחה" }]; // ניתן להרחיב
-        const list = document.getElementById("prayers-list");
-        list.innerHTML = prayerTimes.map(p => `<li>${p.prayer} בימים ${p.day}<span>${p.time}</span></li>`).join('');
-    }
+                <li>טוען זמני תפילות...</li>
 
-    async function fetchAndDisplayDailyContent() {
-        // הלכה יומית מ-Sefaria
-        const sefariaData = await fetchData('https://www.sefaria.org/api/calendars');
-        if (sefariaData) {
-            const halachaItem = sefariaData.calendar_items.find(item => item.title.he.includes('הלכה יומית'));
-            if (halachaItem) {
-                const halachaTextData = await fetchData(`https://www.sefaria.org/api/texts/${halachaItem.url}`);
-                document.getElementById('halacha-text').innerHTML = halachaTextData ? halachaTextData.he.join(' ') : 'לא נמצאה הלכה.';
-            }
-        }
-        
-        // הלכה ב-60 שניות (מכיכר השבת)
-        const halacha60Data = await fetchData(`${RSS_PROXY_URL}${encodeURIComponent('https://a.kikar.co.il/v1/rss/articles/382/rss2')}`);
-        if (halacha60Data && halacha60Data.items.length > 0) {
-            const item = halacha60Data.items[0];
-            document.getElementById('halacha-60-text').innerHTML = `<a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>`;
-        }
-        
-        // ציטוט יומי (מ-Chabad)
-        const quoteData = await fetchData(`${RSS_PROXY_URL}${encodeURIComponent('http://www.chabad.org/tools/rss/dailyquote_rss.xml')}`);
-        if (quoteData && quoteData.items.length > 0) {
-            document.getElementById('quote-content').textContent = quoteData.items[0].description;
-        }
+            </ul>
 
-        // תהילים יומי (מ-Chabad)
-        const psalmsData = await fetchData(`${RSS_PROXY_URL}${encodeURIComponent('https://he.chabad.org/tools/rss/dailystudy_rss.xml')}`);
-        if (psalmsData && psalmsData.items.length > 0) {
-             const psalmsItem = psalmsData.items.find(item => item.title.includes('תהילים'));
-             document.getElementById('psalms-content').innerHTML = psalmsItem ? `<a href="${psalmsItem.link}" target="_blank" rel="noopener">${psalmsItem.title}</a>` : "לא נמצא.";
-        }
-    }
+        </div>
 
-    async function fetchAndDisplayZmanim() {
-        const zmanimResponse = await fetchData(`https://www.hebcal.com/zmanim?cfg=json&geonameid=281184`); // ירושלים
-        const list = document.getElementById("zmanim-list");
-        if (!zmanimResponse || !zmanimResponse.times) {
-            list.innerHTML = '<li>שגיאה בטעינת זמני היום.</li>';
-            return;
-        }
-        
-        const zmanimData = [
-             { name: "עלות השחר (72 דק')", time: new Date(zmanimResponse.times.alotHaShachar), desc: "תחילת זמן הנחת תפילין (בדיעבד)." },
-             { name: "זמן טלית ותפילין", time: new Date(zmanimResponse.times.misheyakir), desc: "זמן הנחת טלית ותפילין (לכתחילה)." },
-             { name: "הנץ החמה", time: new Date(zmanimResponse.times.neitzHaChama), desc: "זריחת השמש, הזמן המועדף לתפילת שחרית." },
-             { name: "סוף זמן ק\"ש (מ\"א)", time: new Date(zmanimResponse.times.sofZmanShmaMGA), desc: "סוף זמן קריאת שמע לשיטת המגן אברהם." },
-             { name: "סוף זמן ק\"ש (גר\"א)", time: new Date(zmanimResponse.times.sofZmanShmaGRA), desc: "סוף זמן קריאת שמע לשיטת הגר\"א." },
-             { name: "סוף זמן תפילה (מ\"א)", time: new Date(zmanimResponse.times.sofZmanTfillaMGA), desc: "סוף זמן תפילת שחרית לשיטת המגן אברהם." },
-             { name: "סוף זמן תפילה (גר\"א)", time: new Date(zmanimResponse.times.sofZmanTfillaGRA), desc: "סוף זמן תפילת שחרית לשיטת הגר\"א." },
-             { name: "חצות היום", time: new Date(zmanimResponse.times.chatzot), desc: "אמצע היום, תחילת זמן תפילת מנחה (בדיעבד)." },
-             { name: "מנחה גדולה", time: new Date(zmanimResponse.times.minchaGedola), desc: "תחילת זמן תפילת מנחה (לכתחילה)." },
-             { name: "מנחה קטנה", time: new Date(zmanimResponse.times.minchaKetana), desc: "זמן מנחה המועדף יותר." },
-             { name: "פלג המנחה", time: new Date(zmanimResponse.times.plagHaMincha), desc: "נקודת זמן חשובה להלכות תפילה ושבת." },
-             { name: "הדלקת נרות", time: new Date(zmanimResponse.times.candles), desc: `זמן הדלקת נרות שבת, ${zmanimResponse.locations.jerusalem.candleLighting} דקות לפני השקיעה.` },
-             { name: "שקיעת החמה", time: new Date(zmanimResponse.times.shkiah), desc: "סוף היום ותחילת בין השמשות." },
-             { name: "צאת הכוכבים", time: new Date(zmanimResponse.times.tzeit), desc: "תחילת הלילה, זמן תפילת ערבית." },
-             { name: "צאת הכוכבים (ר\"ת)", time: new Date(zmanimResponse.times.tzeit72), desc: "צאת הכוכבים לשיטת רבינו תם." },
-             { name: "חצות הלילה", time: new Date(zmanimResponse.times.chatzotLayla), desc: "אמצע הלילה, זמן תיקון חצות." }
-        ];
+    </section>
 
-        list.innerHTML = zmanimData.map(zman => {
-            const timeStr = zman.time.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jerusalem' });
-            return `<li onclick="openModal('${zman.name}', '${zman.desc}')">${zman.name}<span>${timeStr}</span></li>`;
-        }).join('');
-    }
 
-    async function fetchAndDisplayShabbatTimes() {
-        const cities = [
-            { name: "ירושלים", geonameid: "281184" }, { name: "תל אביב", geonameid: "293397" },
-            { name: "חיפה", geonameid: "294801" }, { name: "באר שבע", geonameid: "295530" }
-        ];
-        const container = document.getElementById("shabbat-times-container");
-        container.innerHTML = '';
-        
-        for (const city of cities) {
-            const data = await fetchData(`https://www.hebcal.com/shabbat?cfg=json&geo=geoname&geonameid=${city.geonameid}&m=50&lg=h`);
-            if (data && data.items) {
-                const cityDiv = document.createElement('div');
-                const candles = data.items.find(i => i.category === 'candles').title;
-                const havdalah = data.items.find(i => i.category === 'havdalah').title;
-                cityDiv.innerHTML = `<h3>${city.name}</h3><p>${candles}</p><p>${havdalah}</p>`;
-                container.appendChild(cityDiv);
-            }
-        }
-    }
 
-    async function fetchAndDisplayCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1;
-        const data = await fetchData(`https://www.hebcal.com/hebcal?v=1&cfg=json&lg=h&year=${year}&month=${month}&maj=on&min=on&nx=on&mf=on&ss=on&mod=on`);
-        calendarEvents = data ? data.items : [];
-        renderCalendar();
-        
-        // בדיקת ראש חודש
-        const todayString = new Date().toISOString().split('T')[0];
-        const roshChodeshEvent = calendarEvents.find(e => e.date.startsWith(todayString) && e.category === "roshchodesh");
-        if (roshChodeshEvent) {
-            displayRoshChodeshAlert(roshChodeshEvent.hebrew.split(' ')[2]);
-        }
-    }
+    <!-- הלכה יומית -->
 
-    function renderCalendar() {
-        const year = currentDate.getFullYear(), month = currentDate.getMonth();
-        document.getElementById('current-month').textContent = `${new Date(year, month).toLocaleString('he-IL', { month: 'long' })} ${year}`;
-        const daysContainer = document.getElementById('calendar-days');
-        document.getElementById('weekdays').innerHTML = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map(day => `<div class="weekday">${day}</div>`).join('');
-        daysContainer.innerHTML = '';
-        const firstDay = new Date(year, month, 1).getDay();
-        const lastDate = new Date(year, month + 1, 0).getDate();
-        for (let i = 0; i < firstDay; i++) daysContainer.innerHTML += '<div class="calendar-day empty"></div>';
-        for (let day = 1; day <= lastDate; day++) {
-            const dateString = new Date(year, month, day).toISOString().split('T')[0];
-            const dayEvents = calendarEvents.filter(e => e.date.startsWith(dateString));
-            const dayElement = document.createElement('div');
-            dayElement.className = 'calendar-day';
-            dayElement.textContent = day;
-            if (dayEvents.length > 0) {
-                dayElement.classList.add('has-events');
-                dayElement.onclick = () => {
-                    const panel = document.getElementById('events-panel');
-                    const list = document.getElementById('events-list');
-                    list.innerHTML = dayEvents.map(event => `<li>${event.title}</li>`).join('');
-                    panel.style.display = 'block';
-                };
-            }
-            daysContainer.appendChild(dayElement);
-        }
-    }
+    <section id="daily-halacha">
 
-    function navigateMonth(direction) {
-        currentDate.setMonth(currentDate.getMonth() + direction);
-        document.getElementById('events-panel').style.display = 'none';
-        fetchAndDisplayCalendar();
-    }
-    
-    async function fetchAndDisplayNews() {
-        const data = await fetchData(`${RSS_PROXY_URL}${encodeURIComponent('https://www.inn.co.il/Rss.aspx')}`);
-        const list = document.getElementById('rss-news-list');
-        if (!data || !data.items) {
-            list.innerHTML = '<li>שגיאה בטעינת החדשות.</li>';
-            return;
-        }
-        list.innerHTML = data.items.slice(0, 5).map(item => `
-            <li>
-                <a href="${item.link}" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
-                    <strong>${item.title}</strong>
-                    <p style="text-align: right;">${item.description.replace(/<[^>]*>?/gm, '').substring(0, 100)}...</p>
-                </a>
-            </li>`).join('');
-    }
+        <div class="card">
 
-    // --- הפעלת כל הפונקציות בטעינת הדף ---
-    document.addEventListener('DOMContentLoaded', () => {
-        displayPrayerTimes();
-        fetchAndDisplayDailyContent();
-        fetchAndDisplayZmanim();
-        fetchAndDisplayShabbatTimes();
-        fetchAndDisplayCalendar();
-        fetchAndDisplayNews();
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-    });
-    </script>
+            <h2>הלכה יומית</h2>
+
+            <p id="halacha-text">טוען הלכה יומית...</p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- זמני היום -->
+
+    <section id="zmanim">
+
+        <div class="card">
+
+            <h2>זמני היום</h2>
+
+            <ul id="zmanim-list" class="zmanim-list">
+
+                <li>טוען זמני היום...</li>
+
+            </ul>
+
+        </div>
+
+    </section>
+
+
+
+    <section id="shabbat-times">
+
+        <div class="card">
+
+            <h2>זמני שבת</h2>
+
+            <div id="shabbat-times-container">
+
+                <p>טוען זמני שבת...</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <section id="daily-psalms">
+
+        <div class="card">
+
+            <h2>תהילים יומי</h2>
+
+            <div id="psalms-content">
+
+                <p>טוען תהילים יומי...</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- שיעורי וידאו -->
+
+    <section id="videos">
+
+        <div class="card">
+
+            <h2>שיעורי וידאו</h2>
+
+            <iframe width="100%" height="315" src="https://www.youtube.com/embed/kMiq-iCT_wg" frameborder="0" allowfullscreen></iframe>
+
+        </div>
+
+    </section>
+
+
+
+    <section id="events">
+
+        <div class="calendar-container">
+
+            <div class="calendar-header">
+
+                <h2>לוח שנה יהודי</h2>
+
+                <div class="calendar-nav">
+
+                    <button class="nav-button" onclick="navigateMonth(-1)">❮</button>
+
+                    <span id="current-month"></span>
+
+                    <button class="nav-button" onclick="navigateMonth(1)">❯</button>
+
+                </div>
+
+            </div>
+
+ 
+
+   
+
+            <div class="calendar-grid" id="weekdays"></div>
+
+            <div class="calendar-grid" id="calendar-days"></div>
+
+            <div class="events-panel" id="events-panel">
+
+                <h3>אירועים</h3>
+
+                <ul class="events-list" id="events-list"></ul>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- גלריה -->
+
+    <section id="gallery">
+
+        <div class="card">
+
+            <h2>גלריה</h2>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+
+                <img src="image1.jpg" alt="אירוע 1" style="width: 30%; border-radius: 8px;">
+
+                <img src="image2.jpg" alt="אירוע 2" style="width: 30%; border-radius: 8px;">
+
+                <img src="image3.jpg" alt="אירוע 3" style="width: 30%; border-radius: 8px;">
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <section id="halacha-in-60-seconds">
+
+        <div class="card">
+
+            <h2>הלכה בשישים שניות</h2>
+
+            <div id="halacha-content">
+
+                <p>טוען הלכה...</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <section id="daily-quote">
+
+        <div class="card">
+
+            <h2>ציטוט יומי</h2>
+
+            <div id="quote-content">
+
+                <p>טוען ציטוט יומי...</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <section id="news">
+
+        <div class="card">
+
+            <h2>חדשות ועדכונים</h2>
+
+            <ul id="rss-news-list" style="list-style-type: none; padding: 0;">
+
+                <li>טוען חדשות...</li>
+
+            </ul>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- צור קשר -->
+
+    <section id="contact">
+
+        <div class="card">
+
+            <h2>צור קשר</h2>
+
+            <form action="send_message.php" method="post">
+
+                <label for="name">שם:</label>
+
+                <input type="text" id="name" name="name" required style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+
+                <label for="email">דוא"ל:</label>
+
+                <input type="email" id="email" name="email" required style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+
+                <label for="message">הודעה:</label>
+
+                <textarea id="message" name="message" rows="5" required style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+
+                <button type="submit" style="background-color: #004080; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">שלח הודעה</button>
+
+            </form>
+
+            <hr>
+
+            <div style="text-align: center; margin-top: 20px;">
+
+                <h3>הצטרפות לקבוצת WhatsApp</h3>
+
+                <p>כדי להצטרף לקבוצת ה-WhatsApp מנחה, יש ללחוץ על הקישור למטה:</p>
+
+                <a href="https://chat.whatsapp.com/JhJEWl0RXzx7AO1TbvJWTh" target="_blank" style="background-color: #25D366; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; display: inline-block;">הצטרף לקבוצה</a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- תרומות -->
+
+    <section id="donate">
+
+        <div class="card">
+
+            <h2>תרומות</h2>
+
+            <p>תמכו בפעילות בית הכנסת על ידי תרומה מאובטחת.</p>
+
+            <form action="https://www.paypal.com/donate" method="post" target="_blank">
+
+                <input type="hidden" name="business" value="your_paypal_email@example.com">
+
+                <input type="hidden" name="currency_code" value="ILS">
+
+                <button type="submit" style="background-color: #004080; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">תרום עכשיו</button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- תחתית הדף -->
+
+    <footer>
+
+        <p>© 2024 בית כנסת משכן סידב. כל הזכויות שמורות.</p>
+
+    </footer>
+
+
+
+    <!-- כפתור גלילה למעלה -->
+
+    <button onclick="scrollToTop()" style="position: fixed; bottom: 20px; right: 20px; display: none; background-color: #004080; color: white; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer;" id="scrollTopBtn">↑</button>
+
+
+
+    <div id="rosh-chodesh-alert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #fff5f5; color: #c53030; padding: 20px; border: 1px solid #c53030; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000;">
+
+        <span style="font-weight: bold; font-size: 1.2rem;">🔔 תזכורת ראש חודש 🔔</span>
+
+        <p id="rosh-chodesh-text" style="margin: 10px  WILLIAM0;"></p>
+
+        <button onclick="closeRoshChodeshAlert()" style="background: #c53030; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">הבנתי</button>
+
+    </div>
+
+
+
+    <!-- קוד JavaScript -->
+
+    <script>
+
+        let currentDate = new Date();
+
+        let events = [];
+
+        const weekDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+
+        const hebrewMonths = [
+
+            'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+
+            'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'
+
+        ];
+
+
+
+        async function fetchEvents() {
+
+            try {
+
+                const year = currentDate.getFullYear();
+
+                const month = currentDate.getMonth() + 1;
+
+
+
+                const responseCurrent = await fetch(
+
+                    `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${year}&month=${month}&i=off&maj=on&min=on&nx=on&mf=on&ss=on&mod=on&lg=h`
+
+                );
+
+                const dataCurrent = await responseCurrent.json();
+
+
+
+                const responseNext = await fetch(
+
+                    `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${month === 12 ? year + 1 : year}&month=${month === 12 ? 1 : month + 1}&i=off&maj=on&min=on&nx=on&mf=on&ss=on&mod=on&lg=h`
+
+                );
+
+                const dataNext = await responseNext.json();
+
+
+
+                events = [...(dataCurrent.items || []), ...(dataNext.items || [])];
+
+                console.log("כל האירועים שהתקבלו:", events);
+
+
+
+                renderCalendar();
+
+                checkRoshChodesh(events);
+
+            } catch (error) {
+
+                console.error("שגיאה בבקשת ה-API:", error);
+
+            }
+
+        }
+
+
+
+        function renderWeekDays() {
+
+            const weekdaysContainer = document.getElementById('weekdays');
+
+            weekdaysContainer.innerHTML = weekDays
+
+                .map(day => `<div class="weekday">${day}</div>`)
+
+                .join('');
+
+        }
+
+
+
+        function getEventsForDay(date) {
+
+            return events.filter(event => {
+
+                const eventDate = new Date(event.date);
+
+                return eventDate.getDate() === date.getDate() &&
+
+                       eventDate.getMonth() === date.getMonth() &&
+
+                       eventDate.getFullYear() === date.getFullYear();
+
+            });
+
+        }
+
+
+
+        function toggleMenu() {
+
+            const nav = document.getElementById('main-nav');
+
+            nav.classList.toggle('active');
+
+        }
+
+
+
+        document.querySelectorAll('#main-nav a').forEach(link => {
+
+            link.addEventListener('click', () => {
+
+                const nav = document.getElementById('main-nav');
+
+                if (nav.classList.contains('active')) {
+
+                    nav.classList.remove('active');
+
+                }
+
+            });
+
+        });
+
+
+
+        async function fetchShabbatTimesForCities() {
+
+            const cities = [
+
+                { name: "ירושלים", geonameid: "281184" },
+
+                { name: "תל אביב", geonameid: "293397" },
+
+                { name: "באר שבע", geonameid: "295530" },
+
+                { name: "חיפה", geonameid: "294801" }
+
+            ];
+
+
+
+            const container = document.getElementById("shabbat-times-container");
+
+            container.innerHTML = '';
+
+
+
+            for (const city of cities) {
+
+                try {
+
+                    const response = await fetch(`https://www.hebcal.com/shabbat?cfg=json&geo=geoname&geonameid=${city.geonameid}&m=50`);
+
+                    const data = await response.json();
+
+
+
+                    const cityTitle = document.createElement("h3");
+
+                    cityTitle.textContent = city.name;
+
+                    container.appendChild(cityTitle);
+
+
+
+                    const ul = document.createElement("ul");
+
+                    ul.className = "zmanim-list";
+
+
+
+                    const candleLighting = data.items.find(item => item.category === "candles");
+
+                    const havdalah = data.items.find(item => item.category === "havdalah");
+
+
+
+                    if (candleLighting) {
+
+                        const li = document.createElement("li");
+
+                        li.textContent = `הדלקת נרות: ${candleLighting.title.split(": ")[1]}`;
+
+                        ul.appendChild(li);
+
+                    }
+
+
+
+                    if (havdalah) {
+
+                        const li = document.createElement("li");
+
+                        li.textContent = `יציאת שבת: ${havdalah.title.split(": ")[1]}`;
+
+                        ul.appendChild(li);
+
+                    }
+
+
+
+                    container.appendChild(ul);
+
+                } catch (error) {
+
+                    console.error(`שגיאה בטעינת זמני שבת עבור ${city.name}:`, error);
+
+                    const errorMsg = document.createElement("p");
+
+                    errorMsg.textContent = `שגיאה בטעינת זמני שבת עבור ${city.name}.`;
+
+                    container.appendChild(errorMsg);
+
+                }
+
+            }
+
+        }
+
+
+
+        document.addEventListener("DOMContentLoaded", fetchShabbatTimesForCities);
+
+
+
+        function renderCalendar() {
+
+            const daysContainer = document.getElementById('calendar-days');
+
+            const monthYearLabel = document.getElementById('current-month');
+
+            
+
+            monthYearLabel.textContent = `${hebrewMonths[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+
+
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+            
+
+            daysContainer.innerHTML = '';
+
+
+
+            for (let i = 0; i < firstDay.getDay(); i++) {
+
+                daysContainer.innerHTML += '<div class="calendar-day"></div>';
+
+            }
+
+
+
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+
+                const dayEvents = getEventsForDay(date);
+
+                const hasEvents = dayEvents.length > 0;
+
+
+
+                const dayElement = document.createElement('div');
+
+                dayElement.className = `calendar-day${hasEvents ? ' has-events' : ''}`;
+
+                dayElement.innerHTML = `
+
+                    ${day}
+
+                    ${hasEvents ? '<div class="event-indicator"></div>' : ''}
+
+                `;
+
+                dayElement.onclick = () => showEvents(dayEvents);
+
+                daysContainer.appendChild(dayElement);
+
+            }
+
+        }
+
+
+
+        function showEvents(dayEvents) {
+
+            const eventsPanel = document.getElementById('events-panel');
+
+            const eventsList = document.getElementById('events-list');
+
+            
+
+            if (dayEvents && dayEvents.length > 0) {
+
+                eventsList.innerHTML = dayEvents
+
+                    .map(event => `<li>${event.title}</li>`)
+
+                    .join('');
+
+                eventsPanel.classList.add('active');
+
+            } else {
+
+                eventsPanel.classList.remove('active');
+
+            }
+
+        }
+
+
+
+        function navigateMonth(direction) {
+
+            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1);
+
+            fetchEvents();
+
+        }
+
+
+
+        renderWeekDays();
+
+        fetchEvents();
+
+
+
+        async function fetchZmanim() {
+
+            try {
+
+                const response = await fetch(`https://api.sunrise-sunset.org/json?lat=31.7683&lng=35.2137&formatted=0`);
+
+                const data = await response.json();
+
+                const sunrise = new Date(data.results.sunrise);
+
+                const sunset = new Date(data.results.sunset);
+
+
+
+                const zmanimData = [
+
+                    { name: "עלות השחר 72 דקות", time: new Date(sunrise.getTime() - 72 * 60000), description: "זמן תחילת היום לפי 50 דקות לפני הנץ החמה." },
+
+                    { name: "זמן טלית ותפילין", time: new Date(sunrise.getTime() - 46 * 60000), description: "הזמן שבו אפשר להניח תפילין ולהתעטף בטלית לפי 46 דקות לפני הנץ החמה." },
+
+                    { name: "הנץ החמה", time: sunrise, description: "הרגע שבו נראית הנקודה הראשונה של השמש." },
+
+                    { name: "סוף זמן קריאת שמע למגן אברהם", time: new Date(sunrise.getTime() + 119 * 60000), description: "הזמן האחרון לקריאת שמע לפי שיטת מגן אברהם." },
+
+                    { name: "סוף זמן קריאת שמע לגר\"א", time: new Date(sunrise.getTime() + 157 * 60000), description: "הזמן האחרון לקריאת שמע לפי הגר\"א." },
+
+                    { name: "סוף זמן תפילה למגן אברהם", time: new Date(sunrise.getTime() + 184 * 60000), description: "הזמן האחרון לתפילה לפי שיטת מגן אברהם." },
+
+                    { name: "סוף זמן תפילה לגר\"א", time: new Date(sunrise.getTime() + 210 * 60000), description: "הזמן האחרון לתפילה לפי הגר\"א." },
+
+                    { name: "חצות היום", time: new Date((sunrise.getTime() + sunset.getTime()) / 2), description: "נקודת האמצע המדויקת של היום." },
+
+                    { name: "מנחה גדולה", time: new Date(sunset.getTime() - 284 * 60000), description: "זמן מנחה גדולה לפי חישוב לפני השקיעה." },
+
+                    { name: "מנחה קטנה", time: new Date(sunset.getTime() - 130 * 60000), description: "זמן מנחה קטנה הוא שעה וחצי לפני שקיעה." },
+
+                    { name: "פלג הגר\"א", time: new Date(sunset.getTime() - 64 * 60000), description: "זמן פלג המנחה לפי שיטת הגר\"א." },
+
+                    { name: "פלג מג\"א", time: new Date(sunset.getTime() - 7 * 60000), description: "זמן פלג המנחה לפי שיטת מגן אברהם." },
+
+                    { name: "שקיעה", time: sunset, description: "הרגע שבו השמש נעלמת באופק." },
+
+                    { name: "צאת הכוכבים", time: new Date(sunset.getTime() + 18 * 60000), description: "18 דקות לאחר השקיעה מתחיל הלילה." },
+
+                    { name: "צאת הכוכבים לרבינו תם", time: new Date(sunset.getTime() + 72 * 60000), description: "72 דקות לאחר השקיעה לפי רבינו תם." },
+
+                ];
+
+
+
+                const zmanimList = document.getElementById("zmanim-list");
+
+                zmanimList.innerHTML = '';
+
+                zmanimData.forEach(zman => {
+
+                    const li = document.createElement("li");
+
+                    li.textContent = `${zman.name}: ${zman.time.toLocaleTimeString('he-IL', { timeZone: 'Asia/Jerusalem' })}`;
+
+                    li.onclick = () => openModal(zman.name, zman.description);
+
+                    zmanimList.appendChild(li);
+
+                });
+
+            } catch {
+
+                document.getElementById("zmanim-list").innerHTML = '<li>שגיאה בטעינת זמני היום.</li>';
+
+            }
+
+        }
+
+
+
+        function openModal(title, description) {
+
+            document.getElementById("modal-title").textContent = title;
+
+            document.getElementById("modal-description").textContent = description;
+
+            document.getElementById("infoModal").style.display = "flex";
+
+        }
+
+
+
+        function closeModal() {
+
+            document.getElementById("infoModal").style.display = "none";
+
+        }
+
+
+
+        fetchZmanim();
+
+
+
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+        window.onscroll = () => {
+
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+
+                scrollTopBtn.style.display = "block";
+
+            } else {
+
+                scrollTopBtn.style.display = "none";
+
+            }
+
+        };
+
+
+
+        function scrollToTop() {
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        }
+
+
+
+        function fetchPrayerTimes() {
+
+            const prayerTimes = [
+
+                { day: "ראשון", time: "15:00" },
+
+                { day: "שני", time: "15:00" },
+
+                { day: "שלישי", time: "15:00" },
+
+                { day: "רביעי", time: "15:00" },
+
+                { day: "חמישי", time: "14:00" }
+
+            ];
+
+
+
+            const prayersList = document.getElementById("prayers-list");
+
+            prayersList.innerHTML = '';
+
+            prayerTimes.forEach(prayer => {
+
+                const li = document.createElement("li");
+
+                li.textContent = `יום ${prayer.day}: מנחה ב-${prayer.time}`;
+
+                prayersList.appendChild(li);
+
+            });
+
+        }
+
+
+
+        async function fetchDailyHalacha() {
+
+            try {
+
+                const response = await fetch('https://www.sefaria.org/api/calendars');
+
+                const data = await response.json();
+
+                const halachaItem = data.calendar_items.find(item => item.title.he.includes('הלכה יומית'));
+
+                if (halachaItem) {
+
+                    const halachaResponse = await fetch(`https://www.sefaria.org/api/texts/${halachaItem.url}`);
+
+                    const halachaData = await halachaResponse.json();
+
+                    document.getElementById('halacha-text').innerHTML = halachaData.he;
+
+                } else {
+
+                    document.getElementById('halacha-text').textContent = 'לא נמצאה הלכה יומית להיום.';
+
+                }
+
+            } catch (error) {
+
+                document.getElementById('halacha-text').textContent = 'שגיאה בטעינת ההלכה היומית.';
+
+            }
+
+        }
+
+
+
+        fetchPrayerTimes();
+
+        fetchDailyHalacha();
+
+
+
+        async function fetchArutz7RSS() {
+
+            const rssUrl = 'https://www.inn.co.il/Rss.aspx';
+
+            const proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=';
+
+
+
+            try {
+
+                const response = await fetch(`${proxyUrl}${encodeURIComponent(rssUrl)}`);
+
+                const data = await response.json();
+
+
+
+                if (data.status === 'ok') {
+
+                    displayArutz7RSS(data.items);
+
+                } else {
+
+                    throw new Error('שגיאה בשליפת ה-RSS');
+
+                }
+
+            } catch (error) {
+
+                console.error('שגיאה בטעינת עדכוני ערוץ 7:', error);
+
+                document.getElementById('rss-news-list').innerHTML = 
+
+                    '<li>שגיאה בטעינת החדשות. נסה שוב מאוחר יותר.</li>';
+
+            }
+
+        }
+
+
+
+        async function fetchDailyQuote() {
+
+            const rssUrl = 'http://www.chabad.org/tools/rss/dailyquote_rss.xml';
+
+            const proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=';
+
+
+
+            try {
+
+                const response = await fetch(`${proxyUrl}${encodeURIComponent(rssUrl)}`);
+
+                const data = await response.json();
+
+
+
+                if (data.status !== 'ok') throw new Error('שגיאה בטעינת ה-RSS');
+
+
+
+                const firstItem = data.items[0];
+
+                if (!firstItem) throw new Error('לא נמצאו פריטים ב-RSS');
+
+
+
+                displayDailyQuote(firstItem.title, firstItem.description);
+
+            } catch (error) {
+
+                console.error('שגיאה בטעינת הציטוט היומי:', error);
+
+                displayDailyQuote('שגיאה', 'לא ניתן לטעון את הציטוט היומי.');
+
+            }
+
+        }
+
+
+
+        function displayDailyQuote(title, description) {
+
+            const quoteContainer = document.getElementById('quote-content');
+
+            quoteContainer.innerHTML = `
+
+                <h3>${title}</h3>
+
+                <p>${description}</p>
+
+            `;
+
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', fetchDailyQuote);
+
+
+
+        function stripHTML(html) {
+
+            const tempDiv = document.createElement('div');
+
+            tempDiv.innerHTML = html;
+
+            return tempDiv.textContent || tempDiv.innerText || '';
+
+        }
+
+
+
+        function displayArutz7RSS(newsItems) {
+
+            const newsList = document.getElementById('rss-news-list');
+
+            newsList.innerHTML = '';
+
+
+
+            newsItems.slice(0, 5).forEach(item => {
+
+                const li = document.createElement('li');
+
+                li.innerHTML = `
+
+                    <a href="${item.link}" target="_blank" style="text-decoration: none; color: inherit;">
+
+                        <strong>${stripHTML(item.title)}</strong>
+
+                        <p>${stripHTML(item.description)}</p>
+
+                    </a>
+
+                `;
+
+                newsList.appendChild(li);
+
+            });
+
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', fetchArutz7RSS);
+
+
+
+        async function fetchHalachaIn60Seconds() {
+
+            const rssUrl = 'https://a.kikar.co.il/v1/rss/articles/382/rss2';
+
+            const proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=';
+
+
+
+            try {
+
+                const response = await fetch(`${proxyUrl}${encodeURIComponent(rssUrl)}`);
+
+                const data = await response.json();
+
+
+
+                if (data.status === 'ok') {
+
+                    displayHalacha(data.items);
+
+                } else {
+
+                    throw new Error('שגיאה בשליפת ה-RSS');
+
+                }
+
+            } catch (error) {
+
+                console.error('שגיאה בטעינת ההלכה בשישים שניות:', error);
+
+                document.getElementById('halacha-content').innerHTML = 
+
+                    '<p>שגיאה בטעינת ההלכה. נסה שוב מאוחר יותר.</p>';
+
+            }
+
+        }
+
+
+
+        function displayHalacha(newsItems) {
+
+            const halachaContent = document.getElementById('halacha-content');
+
+            halachaContent.innerHTML = '';
+
+
+
+            if (newsItems.length > 0) {
+
+                const latestItem = newsItems[0];
+
+                halachaContent.innerHTML = `
+
+                    <h3>${latestItem.title}</h3>
+
+                    <p>${latestItem.description}</p>
+
+                    <a href="${latestItem.link}" target="_blank" style="text-decoration: none; color: inherit;">
+
+                        קרא עוד
+
+                    </a>
+
+                `;
+
+            } else {
+
+                halachaContent.innerHTML = '<p>לא נמצאה הלכה עדכנית.</p>';
+
+            }
+
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', fetchHalachaIn60Seconds);
+
+
+
+        async function fetchDailyPsalms() {
+
+            const rssUrl = 'https://he.chabad.org/tools/rss/dailystudy_rss.xml';
+
+            const proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=';
+
+
+
+            try {
+
+                const response = await fetch(`${proxyUrl}${encodeURIComponent(rssUrl)}`);
+
+                const data = await response.json();
+
+
+
+                if (data.status === 'ok') {
+
+                    displayDailyPsalms(data.items);
+
+                } else {
+
+                    throw new Error('שגיאה בשליפת ה-RSS');
+
+                }
+
+            } catch (error) {
+
+                console.error('שגיאה בטעינת התהילים היומי:', error);
+
+                document.getElementById('psalms-content').innerHTML =
+
+                    '<p>שגיאה בטעינת התהילים היומי. נסה שוב מאוחר יותר.</p>';
+
+            }
+
+        }
+
+
+
+        function displayDailyPsalms(rssItems) {
+
+            const psalmsContent = document.getElementById('psalms-content');
+
+            psalmsContent.innerHTML = '';
+
+
+
+            const psalmsItem = rssItems.find(item => item.title.includes('Tehilim'));
+
+            if (psalmsItem) {
+
+                psalmsContent.innerHTML = `
+
+                    <h3>${psalmsItem.title}</h3>
+
+                    <p>${psalmsItem.description}</p>
+
+                    <a href="${psalmsItem.link}" target="_blank" style="text-decoration: none; color: inherit;">
+
+                        קרא עוד
+
+                    </a>
+
+                `;
+
+            } else {
+
+                psalmsContent.innerHTML = '<p>לא נמצא תוכן תהילים יומי. נסה שוב מאוחר יותר.</p>';
+
+            }
+
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', fetchDailyPsalms);
+
+
+
+        function checkRoshChodesh() {
+
+            try {
+
+                const today = new Date().toISOString().split('T')[0];
+
+                const roshChodeshEvent = events.find(event =>
+
+                    event.category === "roshchodesh" && event.date === today
+
+                );
+
+
+
+                if (roshChodeshEvent) {
+
+                    const hebrewMonth = roshChodeshEvent.hebrew.split(' ')[2];
+
+                    displayRoshChodeshAlert(hebrewMonth);
+
+                }
+
+            } catch (error) {
+
+                console.error('שגיאה בבדיקת ראש חודש:', error);
+
+            }
+
+        }
+
+
+
+        function displayRoshChodeshAlert(hebrewMonth) {
+
+            const alertBox = document.getElementById('rosh-chodesh-alert');
+
+            const alertText = document.getElementById('rosh-chodesh-text');
+
+
+
+            alertText.textContent = 
+
+                `🔔 תזכורת ראש חודש 🔔
+
+                היום ראש חודש ${hebrewMonth}.
+
+                
+
+                יש להוסיף יעלה ויבוא בתפילות ובברכת המזון.
+
+                
+
+                חודש מבורך לכולם!`;
+
+
+
+            alertBox.style.display = 'block';
+
+        }
+
+
+
+        function closeRoshChodeshAlert() {
+
+            const alertBox = document.getElementById('rosh-chodesh-alert');
+
+            alertBox.style.display = 'none';
+
+        }
+
+    </script>
 
 </body>
+
 </html>
