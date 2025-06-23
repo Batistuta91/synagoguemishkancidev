@@ -1,1799 +1,970 @@
 <!DOCTYPE html>
-
 <html lang="he" dir="rtl">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>בית כנסת משכן סידב</title>
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
     <style>
-
         :root {
-
             --primary-color: #1a365d;
-
             --secondary-color: #2c5282;
-
             --accent-color: #e2e8f0;
-
-            --text-color: #2d3748;
-
+            --text-color: #1a202c;
             --background-color: #f7fafc;
-
             --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-
             --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
-
             --transition-default: all 0.3s ease;
-
             --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
             --menu-background: rgba(26, 54, 93, 0.95);
-
             --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-
             --gradient-accent: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-
             --border-radius: 12px;
-
         }
-
-
 
         * {
-
             margin: 0;
-
             padding: 0;
-
             box-sizing: border-box;
-
         }
-
-
 
         body {
-
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-
             color: var(--text-color);
-
             direction: rtl;
-
             line-height: 1.6;
-
             overflow-x: hidden;
-
+            text-align: center;
         }
-
-
 
         /* Improved Header with Animation */
-
         header {
-
             background: var(--gradient-primary);
-
             color: white;
-
             text-align: center;
-
             padding: 4rem 1rem;
-
             box-shadow: var(--shadow-lg);
-
             position: relative;
-
             z-index: 1;
-
             overflow: hidden;
-
         }
-
-
 
         header::before {
-
             content: '';
-
             position: absolute;
-
             top: 0;
-
             left: 0;
-
             right: 0;
-
             bottom: 0;
-
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="50" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-
             opacity: 0.3;
-
             animation: float 20s ease-in-out infinite;
-
         }
-
-
 
         @keyframes float {
-
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-
             50% { transform: translateY(-10px) rotate(1deg); }
-
         }
-
-
 
         header h1 {
-
             font-size: 3rem;
-
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-
             text-align: center;
-
             position: relative;
-
             z-index: 2;
-
             animation: fadeInUp 1s ease-out;
-
         }
-
-
 
         header p {
-
             font-size: 1.2rem;
-
             margin-top: 0.5rem;
-
             opacity: 0.9;
-
             position: relative;
-
             z-index: 2;
-
             animation: fadeInUp 1s ease-out 0.2s both;
-
         }
-
-
 
         @keyframes fadeInUp {
-
             from {
-
                 opacity: 0;
-
                 transform: translateY(30px);
-
             }
-
             to {
-
                 opacity: 1;
-
                 transform: translateY(0);
-
             }
-
         }
-
-
 
         /* Enhanced Navigation */
-
         nav {
-
             background: rgba(26, 54, 93, 0.95);
-
             backdrop-filter: blur(10px);
-
             padding: 1rem;
-
             position: sticky;
-
             top: 0;
-
             z-index: 100;
-
             box-shadow: var(--shadow-md);
-
             display: flex;
-
             justify-content: center;
-
             gap: 1rem;
-
             flex-wrap: wrap;
-
         }
-
-
 
         nav a {
-
             color: white;
-
             padding: 12px 20px;
-
             text-decoration: none;
-
             transition: var(--transition-smooth);
-
             border-radius: var(--border-radius);
-
             position: relative;
-
             overflow: hidden;
-
             font-weight: 500;
-
         }
-
-
 
         nav a::before {
-
             content: '';
-
             position: absolute;
-
             top: 0;
-
             left: -100%;
-
             width: 100%;
-
             height: 100%;
-
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-
             transition: var(--transition-smooth);
-
         }
-
-
 
         nav a:hover::before {
-
             left: 100%;
-
         }
-
-
 
         nav a:hover {
-
             background: var(--gradient-accent);
-
             color: white;
-
             transform: translateY(-2px);
-
             box-shadow: var(--shadow-md);
-
         }
-
-
 
         /* Enhanced Sections */
-
         section {
-
             max-width: 1200px;
-
             margin: 3rem auto;
-
             padding: 0 1rem;
-
             animation: fadeInUp 0.8s ease-out;
-
         }
-
-
-
-        /* Improved Cards */
 
         .card {
-
             background: rgba(255, 255, 255, 0.95);
-
             backdrop-filter: blur(10px);
-
             border-radius: var(--border-radius);
-
             padding: 2.5rem;
-
             margin: 2rem 0;
-
             box-shadow: var(--shadow-sm);
-
             transition: var(--transition-smooth);
-
             border: 1px solid rgba(255, 255, 255, 0.2);
-
             position: relative;
-
             overflow: hidden;
-
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
 
-
-
+        .card .zmanim-list, .card #shabbat-times-container, .card #contact form, .card #gallery > div, .card #rss-news-list, .card > p, .card > div {
+            width: 100%;
+        }
+        
         .card::before {
-
             content: '';
-
             position: absolute;
-
             top: 0;
-
             left: 0;
-
             right: 0;
-
             height: 4px;
-
             background: var(--gradient-accent);
-
             transform: scaleX(0);
-
             transition: var(--transition-smooth);
-
         }
-
-
 
         .card:hover::before {
-
             transform: scaleX(1);
-
         }
-
-
 
         .card:hover {
-
             box-shadow: var(--shadow-lg);
-
             transform: translateY(-5px);
-
         }
-
-
 
         /* Enhanced Zmanim List */
-
         .zmanim-list {
-
             list-style: none;
-
             display: grid;
-
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-
             gap: 1.5rem;
-
             padding: 0;
-
         }
-
-
 
         .zmanim-list li {
-
             background: var(--gradient-primary);
-
             padding: 1.5rem;
-
             border-radius: var(--border-radius);
-
             cursor: pointer;
-
             display: flex;
-
             align-items: center;
-
+            justify-content: center;
             transition: var(--transition-smooth);
-
             color: white;
-
             position: relative;
-
             overflow: hidden;
-
             box-shadow: var(--shadow-sm);
-
         }
-
-
 
         .zmanim-list li::before {
-
             content: '';
-
             position: absolute;
-
             top: 0;
-
             left: 0;
-
             right: 0;
-
             bottom: 0;
-
             background: var(--gradient-accent);
-
             opacity: 0;
-
             transition: var(--transition-smooth);
-
         }
-
-
 
         .zmanim-list li:hover::before {
-
             opacity: 1;
-
         }
 
-
-
+        /* -- FIX: Change text color on hover for contrast -- */
         .zmanim-list li:hover {
-
             transform: translateY(-3px);
-
             box-shadow: var(--shadow-md);
-
+            color: var(--primary-color);
         }
-
-
 
         .zmanim-list li span {
-
             position: relative;
-
             z-index: 1;
-
         }
-
-
 
         /* Enhanced Calendar */
-
         .calendar-container {
-
             max-width: 1200px;
-
             margin: 2rem auto;
-
             padding: 1.5rem;
-
             background: rgba(255, 255, 255, 0.95);
-
             backdrop-filter: blur(10px);
-
             border-radius: var(--border-radius);
-
             box-shadow: var(--shadow-lg);
-
             border: 1px solid rgba(255, 255, 255, 0.2);
-
         }
-
-
 
         .calendar-header {
-
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
             margin-bottom: 1.5rem;
-
             padding: 1.5rem;
-
             background: var(--gradient-primary);
-
             color: white;
-
             border-radius: var(--border-radius);
-
             box-shadow: var(--shadow-sm);
-
         }
-
-
 
         .calendar-header h2, #current-month {
-
             color: white;
-
             font-size: 2rem;
-
             font-weight: bold;
-
             text-align: center;
-
             margin: 0;
-
             text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-
         }
-
-
 
         .calendar-nav button {
-
             background: white;
-
             color: var(--primary-color);
-
             border: none;
-
             padding: 0.8rem 1.5rem;
-
             border-radius: var(--border-radius);
-
             cursor: pointer;
-
             transition: var(--transition-smooth);
-
             font-weight: bold;
-
             font-size: 1.1rem;
-
             box-shadow: var(--shadow-sm);
-
         }
-
-
 
         .calendar-nav button:hover {
-
             background: var(--accent-color);
-
             transform: translateY(-2px);
-
             box-shadow: var(--shadow-md);
-
         }
-
-
 
         .calendar-grid {
-
             display: grid;
-
             grid-template-columns: repeat(7, 1fr);
-
             gap: 12px;
-
             margin-top: 1.5rem;
-
         }
-
-
 
         .weekday {
-
             text-align: center;
-
             font-weight: bold;
-
             font-size: 1.1rem;
-
             color: white;
-
             padding: 1rem;
-
             background: var(--gradient-primary);
-
             border-radius: var(--border-radius);
-
             box-shadow: var(--shadow-sm);
-
         }
-
-
 
         .calendar-day {
-
             text-align: center;
-
             padding: 1.2rem;
-
             background: var(--accent-color);
-
             color: var(--text-color);
-
             border: 2px solid transparent;
-
             border-radius: var(--border-radius);
-
             transition: var(--transition-smooth);
-
             position: relative;
-
             min-height: 70px;
-
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
             cursor: pointer;
-
             font-weight: 500;
-
         }
-
-
 
         .calendar-day.has-events {
-
             background: var(--gradient-accent);
-
             color: white;
-
             font-weight: bold;
-
             box-shadow: var(--shadow-sm);
-
         }
-
-
 
         .calendar-day.has-events::after {
-
             content: '●';
-
             position: absolute;
-
             top: 5px;
-
             right: 5px;
-
             color: #ffd700;
-
             font-size: 0.8rem;
-
         }
-
-
 
         .calendar-day:hover {
-
             background: var(--primary-color);
-
             color: white;
-
             transform: scale(1.05);
-
             box-shadow: var(--shadow-md);
-
             border-color: var(--secondary-color);
-
         }
-
-
 
         /* Enhanced Events Panel */
-
         .events-panel {
-
             background: rgba(255, 255, 255, 0.95);
-
             backdrop-filter: blur(10px);
-
             padding: 1.5rem;
-
             border-radius: var(--border-radius);
-
             margin-top: 1.5rem;
-
             box-shadow: var(--shadow-sm);
-
             border: 1px solid rgba(255, 255, 255, 0.2);
-
         }
-
-
 
         .events-panel h3 {
-
             color: var(--primary-color);
-
             font-size: 1.8rem;
-
             margin-bottom: 1.5rem;
-
             text-align: center;
-
             text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-
         }
-
-
 
         .events-list {
-
             list-style: none;
-
             padding: 0;
-
             margin: 0;
-
         }
-
-
 
         .events-list li {
-
             padding: 1rem;
-
             border-bottom: 1px solid var(--accent-color);
-
             font-size: 1.1rem;
-
             background: white;
-
             color: var(--text-color);
-
             margin: 0.8rem 0;
-
             border-radius: var(--border-radius);
-
             transition: var(--transition-smooth);
-
             box-shadow: var(--shadow-sm);
-
             border-left: 4px solid var(--primary-color);
-
         }
-
-
 
         .events-list li:last-child {
-
             border-bottom: none;
-
         }
-
-
 
         .events-list li:hover {
-
             background: var(--gradient-accent);
-
             color: white;
-
             transform: translateX(10px);
-
             box-shadow: var(--shadow-md);
-
         }
-
-
 
         /* Enhanced Content Sections */
-
         #rss-news-list, #halacha-content, #quote-content {
-
             display: flex;
-
             flex-direction: column;
-
             gap: 15px;
-
             background: var(--gradient-primary);
-
             padding: 2rem;
-
             border-radius: var(--border-radius);
-
             transition: var(--transition-smooth);
-
             cursor: pointer;
-
             color: white;
-
             margin: 1.5rem 0;
-
             box-shadow: var(--shadow-sm);
-
             position: relative;
-
             overflow: hidden;
-
         }
-
-
+        
+        /* -- FIX: Ensure content is above hover pseudo-element -- */
+        #halacha-content > *, #quote-content > *, #rss-news-list > * {
+             position: relative;
+             z-index: 2;
+        }
 
         #rss-news-list::before, #halacha-content::before, #quote-content::before {
-
             content: '';
-
             position: absolute;
-
             top: 0;
-
             left: 0;
-
             right: 0;
-
             bottom: 0;
-
             background: var(--gradient-accent);
-
             opacity: 0;
-
             transition: var(--transition-smooth);
-
         }
-
-
 
         #rss-news-list:hover::before, #halacha-content:hover::before, #quote-content:hover::before {
-
             opacity: 1;
-
         }
-
-
 
         #rss-news-list li {
-
             background: rgba(255, 255, 255, 0.95);
-
             backdrop-filter: blur(10px);
-
             color: var(--text-color);
-
             padding: 1.2rem;
-
             border-radius: var(--border-radius);
-
             transition: var(--transition-smooth);
-
             box-shadow: var(--shadow-sm);
-
             position: relative;
-
             z-index: 1;
-
+            text-align: right;
         }
-
-
+        
+        #rss-news-list li strong {
+            display: block;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
 
         #rss-news-list li:hover, #halacha-content:hover, #quote-content:hover {
-
             transform: translateY(-3px);
-
             box-shadow: var(--shadow-md);
-
         }
-
-
 
         /* Enhanced Footer */
-
         footer {
-
             background: var(--gradient-primary);
-
             color: white;
-
             text-align: center;
-
             padding: 3rem 1rem;
-
             margin-top: 3rem;
-
             position: relative;
-
             overflow: hidden;
-
         }
-
-
 
         footer::before {
-
             content: '';
-
             position: absolute;
-
             top: 0;
-
             left: 0;
-
             right: 0;
-
             bottom: 0;
-
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="footerGrain" width="50" height="50" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23footerGrain)"/></svg>');
-
             opacity: 0.2;
-
         }
-
-
 
         footer p {
-
             position: relative;
-
             z-index: 1;
-
             font-size: 1.1rem;
-
         }
-
-
 
         /* Enhanced Menu Toggle */
-
         button.menu-toggle {
-
             display: none;
-
             font-size: 2rem;
-
             background: var(--gradient-primary);
-
             color: white;
-
             border: none;
-
             padding: 12px 18px;
-
             border-radius: var(--border-radius);
-
             cursor: pointer;
-
             box-shadow: var(--shadow-md);
-
             transition: var(--transition-smooth);
-
             position: fixed;
-
             top: 1rem;
-
             right: 1rem;
-
             z-index: 1001;
-
         }
-
-
 
         button.menu-toggle:hover {
-
             transform: scale(1.1);
-
             box-shadow: var(--shadow-lg);
-
         }
-
-
 
         /* Enhanced Scroll Button */
-
         #scrollTopBtn {
-
             position: fixed;
-
             bottom: 30px;
-
             right: 30px;
-
             display: none;
-
             background: var(--gradient-accent);
-
             color: white;
-
             border: none;
-
             padding: 15px 18px;
-
             border-radius: 50%;
-
             cursor: pointer;
-
             font-size: 1.2rem;
-
             box-shadow: var(--shadow-lg);
-
             transition: var(--transition-smooth);
-
             z-index: 1000;
-
         }
-
-
 
         #scrollTopBtn:hover {
-
             transform: translateY(-3px) scale(1.1);
-
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-
         }
-
-
 
         /* Enhanced Form Styles */
-
         #contact input, #contact textarea {
-
             background: rgba(255, 255, 255, 0.95);
-
             backdrop-filter: blur(10px);
-
             color: var(--text-color);
-
             border: 2px solid var(--accent-color);
-
             border-radius: var(--border-radius);
-
             padding: 1rem;
-
             transition: var(--transition-smooth);
-
             font-size: 1rem;
-
+            text-align: center;
         }
-
-
 
         #contact input:focus, #contact textarea:focus {
-
             outline: none;
-
             border-color: var(--secondary-color);
-
             box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
-
             background: white;
-
         }
-
-
+        
+        #contact form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+        
+        #contact form input, #contact form textarea {
+            width: 100%;
+            max-width: 600px;
+        }
 
         #contact button, #donate button {
-
             background: var(--gradient-accent);
-
             color: white;
-
             border: none;
-
             padding: 1rem 2rem;
-
             border-radius: var(--border-radius);
-
             cursor: pointer;
-
             font-size: 1.1rem;
-
             font-weight: bold;
-
             transition: var(--transition-smooth);
-
             box-shadow: var(--shadow-sm);
-
         }
-
-
 
         #contact button:hover, #donate button:hover {
-
             transform: translateY(-2px);
-
             box-shadow: var(--shadow-md);
-
         }
-
-
 
         /* Special Animations */
-
         @keyframes pulse {
-
             0%, 100% { opacity: 1; }
-
             50% { opacity: 0.7; }
-
         }
-
-
 
         .pulse {
-
             animation: pulse 2s infinite;
-
         }
-
-
 
         /* Enhanced Rosh Chodesh Alert */
-
         #rosh-chodesh-alert {
-
             display: none;
-
             position: fixed;
-
             top: 30px;
-
             left: 50%;
-
             transform: translateX(-50%);
-
             background: rgba(255, 245, 245, 0.98);
-
             backdrop-filter: blur(10px);
-
             color: #c53030;
-
             padding: 2rem;
-
             border: 2px solid #c53030;
-
             border-radius: var(--border-radius);
-
             box-shadow: var(--shadow-lg);
-
             z-index: 1000;
-
             animation: slideInDown 0.5s ease-out;
-
             max-width: 400px;
-
         }
-
-
 
         @keyframes slideInDown {
-
             from {
-
                 opacity: 0;
-
                 transform: translateX(-50%) translateY(-100px);
-
             }
-
             to {
-
                 opacity: 1;
-
                 transform: translateX(-50%) translateY(0);
-
             }
-
         }
-
-
 
         #rosh-chodesh-alert span {
-
             font-weight: bold;
-
             font-size: 1.3rem;
-
             display: block;
-
             margin-bottom: 1rem;
-
         }
-
-
 
         #rosh-chodesh-alert button {
-
             background: #c53030;
-
             color: white;
-
             border: none;
-
             padding: 10px 20px;
-
             border-radius: var(--border-radius);
-
             cursor: pointer;
-
             transition: var(--transition-smooth);
-
             font-weight: bold;
-
             margin-top: 1rem;
-
         }
-
-
 
         #rosh-chodesh-alert button:hover {
-
             background: #9c2626;
-
             transform: translateY(-2px);
-
         }
-
-
 
         /* Enhanced Responsive Design */
-
         @media (max-width: 768px) {
-
             body {
-
                 padding-top: 70px;
-
             }
-
-
 
             button.menu-toggle {
-
                 display: block;
-
             }
-
-
 
             nav {
-
                 position: fixed;
-
                 top: 0;
-
                 right: -100%;
-
                 width: 100%;
-
                 height: 100vh;
-
                 background: var(--menu-background);
-
                 backdrop-filter: blur(20px);
-
                 flex-direction: column;
-
                 justify-content: flex-start;
-
                 align-items: center;
-
                 padding-top: 6rem;
-
                 overflow-y: auto;
-
                 transition: var(--transition-smooth);
-
                 box-sizing: border-box;
-
             }
-
-
 
             html, body {
-
                 overflow-x: hidden;
-
             }
-
-
 
             nav.active {
-
                 right: 0;
-
             }
-
-
 
             nav a {
-
                 width: 90%;
-
                 margin: 0.8rem auto;
-
                 text-align: center;
-
                 font-size: 1.3rem;
-
                 padding: 1.5rem;
-
                 background: rgba(255, 255, 255, 0.1);
-
                 border-radius: var(--border-radius);
-
                 backdrop-filter: blur(10px);
-
             }
-
-
 
             nav a:hover {
-
                 background: rgba(255, 255, 255, 0.2);
-
             }
-
-
 
             header h1 {
-
                 font-size: 2.2rem;
-
             }
-
-
 
             .calendar-header h2, #current-month {
-
                 font-size: 1.5rem;
-
             }
-
-
 
             .calendar-header {
-
                 flex-direction: column;
-
                 gap: 1.5rem;
-
                 padding: 1rem;
-
             }
-
-
 
             .calendar-nav {
-
                 width: 100%;
-
                 display: flex;
-
                 justify-content: space-between;
-
             }
-
-
 
             .calendar-nav button {
-
                 width: 45%;
-
                 padding: 1rem;
-
             }
-
-
 
             .calendar-grid {
-
                 gap: 8px;
-
             }
-
-
 
             .calendar-day {
-
                 padding: 0.8rem;
-
                 font-size: 0.9rem;
-
                 min-height: 50px;
-
             }
-
-
 
             .weekday {
-
                 font-size: 0.9rem;
-
                 padding: 0.6rem;
-
             }
-
-
 
             .events-list li {
-
                 padding: 0.8rem;
-
                 font-size: 1rem;
-
             }
-
-
 
             section {
-
                 padding: 0 0.8rem;
-
                 margin: 2rem auto;
-
             }
-
-
 
             .card {
-
                 padding: 1.5rem;
-
                 margin: 1.5rem 0;
-
             }
-
-
 
             .zmanim-list {
-
                 grid-template-columns: 1fr;
-
                 gap: 1rem;
-
             }
-
-
 
             .zmanim-list li {
-
                 padding: 1.2rem;
-
             }
-
-
 
             #scrollTopBtn {
-
                 bottom: 20px;
-
                 right: 20px;
-
                 padding: 12px 15px;
-
             }
-
         }
-
-
 
         /* Center all headers */
-
         h1, h2, h3 {
-
             text-align: center;
-
         }
-
-
 
         .card h2, .card h3 {
-
             color: var(--secondary-color);
-
             text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-
         }
-
-
 
         #halacha-text, #halacha-content p {
-
             color: var(--text-color);
-
             background: var(--accent-color);
-
             padding: 1.5rem;
-
             border-radius: var(--border-radius);
-
             box-shadow: var(--shadow-sm);
-
         }
-
-
 
         #contact label {
-
             color: var(--primary-color);
-
             font-weight: 600;
-
             display: block;
-
             margin-bottom: 0.5rem;
-
         }
-
-
 
         #donate h2 {
-
             color: var(--secondary-color);
-
         }
-
-
 
         #donate p {
-
             color: var(--primary-color);
-
             font-size: 1.1rem;
-
             line-height: 1.7;
-
         }
-
-
 
         #prayers h2, #zmanim h2, #videos h2, #gallery h2, #daily-quote h2, #news h2 {
-
             color: var(--secondary-color);
-
         }
-
-
 
         #halacha-content p {
-
             color: white !important;
-
             background: var(--secondary-color);
-
             padding: 1.5rem;
-
             border-radius: var(--border-radius);
-
             position: relative;
-
             z-index: 1;
-
         }
-
-
+        
+        /* -- FIX: Add shadow to Halacha title for visibility -- */
+        #halacha-content h3 {
+            color: white;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
 
         #quote-content {
-
             display: block !important;
-
             color: white !important;
-
             background: var(--gradient-accent);
-
             padding: 2.5rem;
-
             border-radius: var(--border-radius);
-
             text-align: center;
-
             font-size: 1.3rem;
-
             line-height: 1.6;
-
             position: relative;
-
         }
-
-
 
         #quote-content h3 {
-
             color: rgba(255, 255, 255, 0.9);
-
             margin-bottom: 1.5rem;
-
             font-size: 1.5rem;
-
             position: relative;
-
             z-index: 1;
-
         }
-
-
 
         #quote-content p {
-
             color: white;
-
             margin: 0;
-
             position: relative;
-
             z-index: 1;
-
         }
-
-
 
         #news h2, #rss-news-list li {
-
             color: var(--text-color);
-
         }
-
-
 
         #rss-news-list li a {
-
-            color: var(--primary-color);
-
+            color: var(--secondary-color);
             text-decoration: none;
-
             transition: var(--transition-smooth);
-
+            font-weight: bold;
         }
-
-
 
         #rss-news-list li a:hover {
-
-            color: var(--secondary-color);
-
+            color: var(--primary-color);
+            text-decoration: underline;
         }
-
-
 
         #rss-news-list li:hover {
-
             background: var(--accent-color);
-
             color: var(--primary-color);
-
         }
-
-
 
         #psalms-content {
-
             display: block;
-
             background: rgba(226, 232, 240, 0.95);
-
             backdrop-filter: blur(10px);
-
             color: var(--text-color);
-
             padding: 2rem;
-
             border-radius: var(--border-radius);
-
             font-size: 1.1rem;
-
             line-height: 1.6;
-
             box-shadow: var(--shadow-sm);
-
             margin-top: 1.5rem;
-
             border-left: 4px solid var(--primary-color);
-
         }
-
+        
+        /* -- FIX: Link color fixes for different backgrounds -- */
+        #halacha-content a {
+            color: var(--accent-color); /* Light color for dark background */
+            font-weight: bold;
+            text-decoration: underline;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+        #halacha-content:hover a {
+            color: white;
+        }
+        #psalms-content a, #halacha-text a {
+            color: var(--primary-color); /* Dark color for light background */
+            font-weight: bold;
+            text-decoration: underline;
+        }
 
 
         /* Enhanced Gallery */
-
         #gallery img {
-
             transition: var(--transition-smooth);
-
             box-shadow: var(--shadow-sm);
-
         }
-
-
 
         #gallery img:hover {
-
             transform: scale(1.05);
-
             box-shadow: var(--shadow-md);
-
         }
-
-
+        
+        #gallery > div {
+            justify-content: center;
+        }
 
         /* Enhanced WhatsApp Button */
-
         .whatsapp-button {
-
             background: linear-gradient(135deg, #25D366, #128C7E);
-
             color: white;
-
             text-decoration: none;
-
             padding: 1rem 2rem;
-
             border-radius: var(--border-radius);
-
             display: inline-flex;
-
             align-items: center;
-
             gap: 0.5rem;
-
             transition: var(--transition-smooth);
-
             box-shadow: var(--shadow-sm);
-
             font-weight: bold;
-
         }
-
-
 
         .whatsapp-button:hover {
-
             transform: translateY(-2px);
-
             box-shadow: var(--shadow-md);
-
             background: linear-gradient(135deg, #128C7E, #25D366);
-
         }
-
-
 
         /* Loading Animation */
-
         .loading {
-
             display: inline-block;
-
             width: 20px;
-
             height: 20px;
-
             border: 3px solid rgba(255,255,255,.3);
-
             border-radius: 50%;
-
             border-top-color: #fff;
-
             animation: spin 1s ease-in-out infinite;
-
         }
-
-
 
         @keyframes spin {
-
             to { transform: rotate(360deg); }
-
         }
-
     </style>
 </head>
 <body>
@@ -1818,7 +989,6 @@
         </nav>
     </header>
 
-    <!-- זמני תפילות -->
     <section id="prayers">
         <div class="card">
             <h2>זמני תפילות</h2>
@@ -1828,7 +998,6 @@
         </div>
     </section>
 
-    <!-- הלכה יומית -->
     <section id="daily-halacha">
         <div class="card">
             <h2>הלכה יומית</h2>
@@ -1836,7 +1005,6 @@
         </div>
     </section>
 
-    <!-- זמני היום -->
     <section id="zmanim">
         <div class="card">
             <h2>זמני היום</h2>
@@ -1864,11 +1032,10 @@
         </div>
     </section>
 
-    <!-- שיעורי וידאו -->
     <section id="videos">
         <div class="card">
             <h2>שיעורי וידאו</h2>
-            <iframe width="100%" height="315" src="https://www.youtube.com/embed/kMiq-iCT_wg" frameborder="0" allowfullscreen></iframe>
+            <iframe width="100%" height="315" src="https://www.youtube.com/embed/kMiq-iCT_wg" frameborder="0" allowfullscreen style="max-width: 560px; border-radius: 12px;"></iframe>
         </div>
     </section>
 
@@ -1882,8 +1049,8 @@
                     <button class="nav-button" onclick="navigateMonth(1)">❯</button>
                 </div>
             </div>
- 
-   
+    
+    
             <div class="calendar-grid" id="weekdays"></div>
             <div class="calendar-grid" id="calendar-days"></div>
             <div class="events-panel" id="events-panel">
@@ -1893,7 +1060,6 @@
         </div>
     </section>
 
-    <!-- גלריה -->
     <section id="gallery">
         <div class="card">
             <h2>גלריה</h2>
@@ -1932,29 +1098,29 @@
         </div>
     </section>
 
-    <!-- צור קשר -->
     <section id="contact">
         <div class="card">
             <h2>צור קשר</h2>
             <form action="send_message.php" method="post">
                 <label for="name">שם:</label>
-                <input type="text" id="name" name="name" required style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="text" id="name" name="name" required>
                 <label for="email">דוא"ל:</label>
-                <input type="email" id="email" name="email" required style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="email" id="email" name="email" required>
                 <label for="message">הודעה:</label>
-                <textarea id="message" name="message" rows="5" required style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;"></textarea>
-                <button type="submit" style="background-color: #004080; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">שלח הודעה</button>
+                <textarea id="message" name="message" rows="5" required></textarea>
+                <button type="submit">שלח הודעה</button>
             </form>
-            <hr>
+            <hr style="width:80%; margin: 2rem 0;">
             <div style="text-align: center; margin-top: 20px;">
                 <h3>הצטרפות לקבוצת WhatsApp</h3>
                 <p>כדי להצטרף לקבוצת ה-WhatsApp מנחה, יש ללחוץ על הקישור למטה:</p>
-                <a href="https://chat.whatsapp.com/JhJEWl0RXzx7AO1TbvJWTh" target="_blank" style="background-color: #25D366; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; display: inline-block;">הצטרף לקבוצה</a>
+                <a href="https://chat.whatsapp.com/JhJEWl0RXzx7AO1TbvJWTh" target="_blank" class="whatsapp-button">
+                    <i class="fab fa-whatsapp"></i> הצטרף לקבוצה
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- תרומות -->
     <section id="donate">
         <div class="card">
             <h2>תרומות</h2>
@@ -1962,27 +1128,25 @@
             <form action="https://www.paypal.com/donate" method="post" target="_blank">
                 <input type="hidden" name="business" value="your_paypal_email@example.com">
                 <input type="hidden" name="currency_code" value="ILS">
-                <button type="submit" style="background-color: #004080; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">תרום עכשיו</button>
+                <button type="submit">תרום עכשיו</button>
             </form>
         </div>
     </section>
 
-    <!-- תחתית הדף -->
     <footer>
         <p>© 2024 בית כנסת משכן סידב. כל הזכויות שמורות.</p>
     </footer>
 
-    <!-- כפתור גלילה למעלה -->
-    <button onclick="scrollToTop()" style="position: fixed; bottom: 20px; right: 20px; display: none; background-color: #004080; color: white; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer;" id="scrollTopBtn">↑</button>
+    <button onclick="scrollToTop()" id="scrollTopBtn">↑</button>
 
-    <div id="rosh-chodesh-alert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #fff5f5; color: #c53030; padding: 20px; border: 1px solid #c53030; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000;">
+    <div id="rosh-chodesh-alert">
         <span style="font-weight: bold; font-size: 1.2rem;">🔔 תזכורת ראש חודש 🔔</span>
-        <p id="rosh-chodesh-text" style="margin: 10px  WILLIAM0;"></p>
-        <button onclick="closeRoshChodeshAlert()" style="background: #c53030; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">הבנתי</button>
+        <p id="rosh-chodesh-text" style="margin: 10px 0;"></p>
+        <button onclick="closeRoshChodeshAlert()">הבנתי</button>
     </div>
 
-    <!-- קוד JavaScript -->
     <script>
+        // -- FIX: Wrap dynamic list text in spans for better styling control --
         let currentDate = new Date();
         let events = [];
         const weekDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
@@ -2007,8 +1171,7 @@
                 const dataNext = await responseNext.json();
 
                 events = [...(dataCurrent.items || []), ...(dataNext.items || [])];
-                console.log("כל האירועים שהתקבלו:", events);
-
+                
                 renderCalendar();
                 checkRoshChodesh(events);
             } catch (error) {
@@ -2027,8 +1190,8 @@
             return events.filter(event => {
                 const eventDate = new Date(event.date);
                 return eventDate.getDate() === date.getDate() &&
-                       eventDate.getMonth() === date.getMonth() &&
-                       eventDate.getFullYear() === date.getFullYear();
+                    eventDate.getMonth() === date.getMonth() &&
+                    eventDate.getFullYear() === date.getFullYear();
             });
         }
 
@@ -2074,13 +1237,13 @@
 
                     if (candleLighting) {
                         const li = document.createElement("li");
-                        li.textContent = `הדלקת נרות: ${candleLighting.title.split(": ")[1]}`;
+                        li.innerHTML = `<span>הדלקת נרות: ${candleLighting.title.split(": ")[1]}</span>`;
                         ul.appendChild(li);
                     }
 
                     if (havdalah) {
                         const li = document.createElement("li");
-                        li.textContent = `יציאת שבת: ${havdalah.title.split(": ")[1]}`;
+                        li.innerHTML = `<span>יציאת שבת: ${havdalah.title.split(": ")[1]}</span>`;
                         ul.appendChild(li);
                     }
 
@@ -2135,9 +1298,9 @@
                 eventsList.innerHTML = dayEvents
                     .map(event => `<li>${event.title}</li>`)
                     .join('');
-                eventsPanel.classList.add('active');
+                eventsPanel.style.display = 'block';
             } else {
-                eventsPanel.classList.remove('active');
+                eventsPanel.style.display = 'none';
             }
         }
 
@@ -2157,44 +1320,33 @@
                 const sunset = new Date(data.results.sunset);
 
                 const zmanimData = [
-                    { name: "עלות השחר 72 דקות", time: new Date(sunrise.getTime() - 72 * 60000), description: "זמן תחילת היום לפי 50 דקות לפני הנץ החמה." },
-                    { name: "זמן טלית ותפילין", time: new Date(sunrise.getTime() - 46 * 60000), description: "הזמן שבו אפשר להניח תפילין ולהתעטף בטלית לפי 46 דקות לפני הנץ החמה." },
-                    { name: "הנץ החמה", time: sunrise, description: "הרגע שבו נראית הנקודה הראשונה של השמש." },
-                    { name: "סוף זמן קריאת שמע למגן אברהם", time: new Date(sunrise.getTime() + 119 * 60000), description: "הזמן האחרון לקריאת שמע לפי שיטת מגן אברהם." },
-                    { name: "סוף זמן קריאת שמע לגר\"א", time: new Date(sunrise.getTime() + 157 * 60000), description: "הזמן האחרון לקריאת שמע לפי הגר\"א." },
-                    { name: "סוף זמן תפילה למגן אברהם", time: new Date(sunrise.getTime() + 184 * 60000), description: "הזמן האחרון לתפילה לפי שיטת מגן אברהם." },
-                    { name: "סוף זמן תפילה לגר\"א", time: new Date(sunrise.getTime() + 210 * 60000), description: "הזמן האחרון לתפילה לפי הגר\"א." },
-                    { name: "חצות היום", time: new Date((sunrise.getTime() + sunset.getTime()) / 2), description: "נקודת האמצע המדויקת של היום." },
-                    { name: "מנחה גדולה", time: new Date(sunset.getTime() - 284 * 60000), description: "זמן מנחה גדולה לפי חישוב לפני השקיעה." },
-                    { name: "מנחה קטנה", time: new Date(sunset.getTime() - 130 * 60000), description: "זמן מנחה קטנה הוא שעה וחצי לפני שקיעה." },
-                    { name: "פלג הגר\"א", time: new Date(sunset.getTime() - 64 * 60000), description: "זמן פלג המנחה לפי שיטת הגר\"א." },
-                    { name: "פלג מג\"א", time: new Date(sunset.getTime() - 7 * 60000), description: "זמן פלג המנחה לפי שיטת מגן אברהם." },
-                    { name: "שקיעה", time: sunset, description: "הרגע שבו השמש נעלמת באופק." },
-                    { name: "צאת הכוכבים", time: new Date(sunset.getTime() + 18 * 60000), description: "18 דקות לאחר השקיעה מתחיל הלילה." },
-                    { name: "צאת הכוכבים לרבינו תם", time: new Date(sunset.getTime() + 72 * 60000), description: "72 דקות לאחר השקיעה לפי רבינו תם." },
+                    { name: "עלות השחר 72 דקות", time: new Date(sunrise.getTime() - 72 * 60000) },
+                    { name: "זמן טלית ותפילין", time: new Date(sunrise.getTime() - 46 * 60000) },
+                    { name: "הנץ החמה", time: sunrise },
+                    { name: "סוף זמן קריאת שמע למגן אברהם", time: new Date(sunrise.getTime() + 119 * 60000) },
+                    { name: "סוף זמן קריאת שמע לגר\"א", time: new Date(sunrise.getTime() + 157 * 60000) },
+                    { name: "סוף זמן תפילה למגן אברהם", time: new Date(sunrise.getTime() + 184 * 60000) },
+                    { name: "סוף זמן תפילה לגר\"א", time: new Date(sunrise.getTime() + 210 * 60000) },
+                    { name: "חצות היום", time: new Date((sunrise.getTime() + sunset.getTime()) / 2) },
+                    { name: "מנחה גדולה", time: new Date(sunset.getTime() - 284 * 60000) },
+                    { name: "מנחה קטנה", time: new Date(sunset.getTime() - 130 * 60000) },
+                    { name: "פלג הגר\"א", time: new Date(sunset.getTime() - 64 * 60000) },
+                    { name: "פלג מג\"א", time: new Date(sunset.getTime() - 7 * 60000) },
+                    { name: "שקיעה", time: sunset },
+                    { name: "צאת הכוכבים", time: new Date(sunset.getTime() + 18 * 60000) },
+                    { name: "צאת הכוכבים לרבינו תם", time: new Date(sunset.getTime() + 72 * 60000) },
                 ];
 
                 const zmanimList = document.getElementById("zmanim-list");
                 zmanimList.innerHTML = '';
                 zmanimData.forEach(zman => {
                     const li = document.createElement("li");
-                    li.textContent = `${zman.name}: ${zman.time.toLocaleTimeString('he-IL', { timeZone: 'Asia/Jerusalem' })}`;
-                    li.onclick = () => openModal(zman.name, zman.description);
+                    li.innerHTML = `<span>${zman.name}: ${zman.time.toLocaleTimeString('he-IL', { timeZone: 'Asia/Jerusalem' })}</span>`;
                     zmanimList.appendChild(li);
                 });
             } catch {
                 document.getElementById("zmanim-list").innerHTML = '<li>שגיאה בטעינת זמני היום.</li>';
             }
-        }
-
-        function openModal(title, description) {
-            document.getElementById("modal-title").textContent = title;
-            document.getElementById("modal-description").textContent = description;
-            document.getElementById("infoModal").style.display = "flex";
-        }
-
-        function closeModal() {
-            document.getElementById("infoModal").style.display = "none";
         }
 
         fetchZmanim();
@@ -2225,7 +1377,7 @@
             prayersList.innerHTML = '';
             prayerTimes.forEach(prayer => {
                 const li = document.createElement("li");
-                li.textContent = `יום ${prayer.day}: מנחה ב-${prayer.time}`;
+                li.innerHTML = `<span>יום ${prayer.day}: מנחה ב-${prayer.time}</span>`;
                 prayersList.appendChild(li);
             });
         }
@@ -2238,7 +1390,7 @@
                 if (halachaItem) {
                     const halachaResponse = await fetch(`https://www.sefaria.org/api/texts/${halachaItem.url}`);
                     const halachaData = await halachaResponse.json();
-                    document.getElementById('halacha-text').innerHTML = halachaData.he;
+                    document.getElementById('halacha-text').innerHTML = halachaData.he.join('<br>');
                 } else {
                     document.getElementById('halacha-text').textContent = 'לא נמצאה הלכה יומית להיום.';
                 }
@@ -2265,7 +1417,7 @@
                 }
             } catch (error) {
                 console.error('שגיאה בטעינת עדכוני ערוץ 7:', error);
-                document.getElementById('rss-news-list').innerHTML = 
+                document.getElementById('rss-news-list').innerHTML =
                     '<li>שגיאה בטעינת החדשות. נסה שוב מאוחר יותר.</li>';
             }
         }
@@ -2313,7 +1465,7 @@
             newsItems.slice(0, 5).forEach(item => {
                 const li = document.createElement('li');
                 li.innerHTML = `
-                    <a href="${item.link}" target="_blank" style="text-decoration: none; color: inherit;">
+                    <a href="${item.link}" target="_blank">
                         <strong>${stripHTML(item.title)}</strong>
                         <p>${stripHTML(item.description)}</p>
                     </a>
@@ -2339,7 +1491,7 @@
                 }
             } catch (error) {
                 console.error('שגיאה בטעינת ההלכה בשישים שניות:', error);
-                document.getElementById('halacha-content').innerHTML = 
+                document.getElementById('halacha-content').innerHTML =
                     '<p>שגיאה בטעינת ההלכה. נסה שוב מאוחר יותר.</p>';
             }
         }
@@ -2353,7 +1505,7 @@
                 halachaContent.innerHTML = `
                     <h3>${latestItem.title}</h3>
                     <p>${latestItem.description}</p>
-                    <a href="${latestItem.link}" target="_blank" style="text-decoration: none; color: inherit;">
+                    <a href="${latestItem.link}" target="_blank">
                         קרא עוד
                     </a>
                 `;
@@ -2388,12 +1540,12 @@
             const psalmsContent = document.getElementById('psalms-content');
             psalmsContent.innerHTML = '';
 
-            const psalmsItem = rssItems.find(item => item.title.includes('Tehilim'));
+            const psalmsItem = rssItems.find(item => item.title.includes('Tehilim') || item.title.includes('תהילים'));
             if (psalmsItem) {
                 psalmsContent.innerHTML = `
                     <h3>${psalmsItem.title}</h3>
                     <p>${psalmsItem.description}</p>
-                    <a href="${psalmsItem.link}" target="_blank" style="text-decoration: none; color: inherit;">
+                    <a href="${psalmsItem.link}" target="_blank">
                         קרא עוד
                     </a>
                 `;
@@ -2424,13 +1576,8 @@
             const alertBox = document.getElementById('rosh-chodesh-alert');
             const alertText = document.getElementById('rosh-chodesh-text');
 
-            alertText.textContent = 
-                `🔔 תזכורת ראש חודש 🔔
-                היום ראש חודש ${hebrewMonth}.
-                
-                יש להוסיף יעלה ויבוא בתפילות ובברכת המזון.
-                
-                חודש מבורך לכולם!`;
+            alertText.textContent =
+                `היום ראש חודש ${hebrewMonth}. יש להוסיף יעלה ויבוא בתפילות ובברכת המזון. חודש מבורך לכולם!`;
 
             alertBox.style.display = 'block';
         }
