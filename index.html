@@ -170,7 +170,7 @@
             text-align: center;
         }
 
-        .card .zmanim-list, .card #shabbat-times-container, .card #contact form, .card #gallery > div, .card #rss-news-list, .card > p, .card > div {
+        .card #contact form, .card #gallery > div, .card #rss-news-list, .card > p, .card > div {
             width: 100%;
         }
         
@@ -202,6 +202,7 @@
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5rem;
             padding: 0;
+            width: 100%;
         }
 
         .zmanim-list li {
@@ -235,7 +236,6 @@
             opacity: 1;
         }
 
-        /* -- FIX: Change text color on hover for contrast -- */
         .zmanim-list li:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-md);
@@ -246,6 +246,12 @@
             position: relative;
             z-index: 1;
         }
+        
+        #shabbat-times-container .zmanim-list {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            max-width: 600px;
+        }
+
 
         /* Enhanced Calendar */
         .calendar-container {
@@ -424,7 +430,6 @@
             overflow: hidden;
         }
         
-        /* -- FIX: Ensure content is above hover pseudo-element -- */
         #halacha-content > *, #quote-content > *, #rss-news-list > * {
              position: relative;
              z-index: 2;
@@ -685,6 +690,7 @@
                 overflow-y: auto;
                 transition: var(--transition-smooth);
                 box-sizing: border-box;
+                flex-wrap: nowrap;
             }
 
             html, body {
@@ -700,10 +706,14 @@
                 margin: 0.8rem auto;
                 text-align: center;
                 font-size: 1.3rem;
-                padding: 1.5rem;
+                padding: 1.5rem 1rem; /* Adjusted padding */
                 background: rgba(255, 255, 255, 0.1);
                 border-radius: var(--border-radius);
                 backdrop-filter: blur(10px);
+                /* -- FIX: Center text vertically in mobile menu -- */
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             nav a:hover {
@@ -780,6 +790,21 @@
                 padding: 12px 15px;
             }
         }
+        
+        @media (max-width: 480px) {
+            .calendar-grid {
+                gap: 4px;
+            }
+            .weekday, .calendar-day {
+                padding: 0.5rem 0.2rem;
+                font-size: 0.8rem;
+                min-height: 40px;
+            }
+            .weekday {
+                font-size: 0.7rem;
+            }
+        }
+
 
         /* Center all headers */
         h1, h2, h3 {
@@ -829,7 +854,6 @@
             z-index: 1;
         }
         
-        /* -- FIX: Add shadow to Halacha title for visibility -- */
         #halacha-content h3 {
             color: white;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
@@ -897,9 +921,8 @@
             border-left: 4px solid var(--primary-color);
         }
         
-        /* -- FIX: Link color fixes for different backgrounds -- */
         #halacha-content a {
-            color: var(--accent-color); /* Light color for dark background */
+            color: var(--accent-color);
             font-weight: bold;
             text-decoration: underline;
             margin-top: 1rem;
@@ -909,7 +932,7 @@
             color: white;
         }
         #psalms-content a, #halacha-text a {
-            color: var(--primary-color); /* Dark color for light background */
+            color: var(--primary-color);
             font-weight: bold;
             text-decoration: underline;
         }
@@ -1146,7 +1169,6 @@
     </div>
 
     <script>
-        // -- FIX: Wrap dynamic list text in spans for better styling control --
         let currentDate = new Date();
         let events = [];
         const weekDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
