@@ -1144,42 +1144,72 @@
         renderWeekDays();
         fetchEvents();
 
+        /* Zmanim are fetched from Hebcal's dedicated halachic zmanim engine
+           (the same trusted source family already used elsewhere on this page
+           for Shabbat times and the Hebrew calendar), calculated for the
+           synagogue's own location — Hod HaSharon — instead of a generic
+           sunrise/sunset-based estimate. This matches the calculation method
+           used by sites like yeshiva.org.il far more closely than a DIY offset. */
+        const ZMANIM_LAT = 32.1499;
+        const ZMANIM_LNG = 34.8880;
+        const ZMANIM_TZID = "Asia/Jerusalem";
+
         async function fetchZmanim() {
             try {
-                const response = await fetch(`https://api.sunrise-sunset.org/json?lat=31.7683&lng=35.2137&formatted=0`);
+                const today = new Date();
+                const dateStr = today.toISOString().split('T')[0];
+                const url = `https://www.hebcal.com/zmanim?cfg=json&latitude=${ZMANIM_LAT}&longitude=${ZMANIM_LNG}&tzid=${encodeURIComponent(ZMANIM_TZID)}&date=${dateStr}`;
+                const response = await fetch(url);
                 const data = await response.json();
-                const sunrise = new Date(data.results.sunrise);
-                const sunset = new Date(data.results.sunset);
+                const t = data.times || {};
 
-                const zmanimData = [
-                    { name: "עלות השחר 72 דקות", time: new Date(sunrise.getTime() - 72 * 60000) },
-                    { name: "זמן טלית ותפילין", time: new Date(sunrise.getTime() - 46 * 60000) },
-                    { name: "הנץ החמה", time: sunrise },
-                    { name: "סוף זמן קריאת שמע למגן אברהם", time: new Date(sunrise.getTime() + 119 * 60000) },
-                    { name: "סוף זמן קריאת שמע לגר\"א", time: new Date(sunrise.getTime() + 157 * 60000) },
-                    { name: "סוף זמן תפילה למגן אברהם", time: new Date(sunrise.getTime() + 184 * 60000) },
-                    { name: "סוף זמן תפילה לגר\"א", time: new Date(sunrise.getTime() + 210 * 60000) },
-                    { name: "חצות היום", time: new Date((sunrise.getTime() + sunset.getTime()) / 2) },
-                    { name: "מנחה גדולה", time: new Date(sunset.getTime() - 284 * 60000) },
-                    { name: "מנחה קטנה", time: new Date(sunset.getTime() - 130 * 60000) },
-                    { name: "פלג הגר\"א", time: new Date(sunset.getTime() - 64 * 60000) },
-                    { name: "פלג מג\"א", time: new Date(sunset.getTime() - 7 * 60000) },
-                    { name: "שקיעה", time: sunset },
-                    { name: "צאת הכוכבים", time: new Date(sunset.getTime() + 18 * 60000) },
-                    { name: "צאת הכוכבים לרבינו תם", time: new Date(sunset.getTime() + 72 * 60000) },
+                const sunsetDate = t.sunset ? new Date(t.sunset) : null;
+
+                const fieldMap = [
+                    { name: "עלות השחר", key: "alotHaShachar" },
+                    { name: "זמן טלית ותפילין (משיכיר)", key: "misheyakir" },
+                    { name: "הנץ החמה", key: "sunrise" },
+                    { name: "סוף זמן קריאת שמע למגן אברהם", key: "sofZmanShmaMGA" },
+                    { name: "סוף זמן קריאת שמע לגר\"א", key: "sofZmanShma" },
+                    { name: "סוף זמן תפילה למגן אברהם", key: "sofZmanTfillaMGA" },
+                    { name: "סוף זמן תפילה לגר\"א", key: "sofZmanTfilla" },
+                    { name: "חצות היום", key: "chatzot" },
+                    { name: "מנחה גדולה", key: "minchaGedola" },
+                    { name: "מנחה קטנה", key: "minchaKetana" },
+                    { name: "פלג המנחה", key: "plagHaMincha" },
+                    { name: "שקיעה", key: "sunset" },
+                    { name: "צאת הכוכבים", key: "tzeit7083deg" },
+                    { name: "צאת הכוכבים (הכל)", key: "tzeitHacol" },
                 ];
 
+                let zmanimData = fieldMap
+                    .filter(f => t[f.key])
+                    .map(f => ({ name: f.name, time: new Date(t[f.key]) }));
+
+                /* Rabbeinu Tam (72 fixed minutes after sunset) as a reliable fallback
+                   in case the API's own tzeit-72 field isn't present for this location. */
+                if (sunsetDate && !zmanimData.some(z => z.name.includes("רבינו תם"))) {
+                    zmanimData.push({
+                        name: "צאת הכוכבים לרבינו תם",
+                        time: t.tzeit72min ? new Date(t.tzeit72min) : new Date(sunsetDate.getTime() + 72 * 60000)
+                    });
+                }
+
+                zmanimData.sort((a, b) => a.time - b.time);
+
                 const zmanimList = document.getElementById("zmanim-list");
+                if (!zmanimData.length) throw new Error("no zmanim data");
                 zmanimList.innerHTML = '';
                 zmanimData.forEach(zman => {
                     const li = document.createElement("li");
-                    li.innerHTML = `<span>${zman.name}: ${zman.time.toLocaleTimeString('he-IL', { timeZone: 'Asia/Jerusalem' })}</span>`;
+                    li.innerHTML = `<span>${zman.name}: ${zman.time.toLocaleTimeString('he-IL', { timeZone: 'Asia/Jerusalem', hour: '2-digit', minute: '2-digit' })}</span>`;
                     zmanimList.appendChild(li);
                 });
 
                 globalZmanimData = zmanimData;
                 updateNextZmanBadge();
-            } catch {
+            } catch (error) {
+                console.error('שגיאה בטעינת זמני היום:', error);
                 document.getElementById("zmanim-list").innerHTML = '<li>שגיאה בטעינת זמני היום.</li>';
             }
         }
@@ -1230,6 +1260,17 @@
             }
         }
         fetchHebrewDateToday();
+
+        /* refresh the Hebrew date automatically once the local date rolls over */
+        let lastCheckedDay = new Date().getDate();
+        setInterval(() => {
+            const nowDay = new Date().getDate();
+            if (nowDay !== lastCheckedDay) {
+                lastCheckedDay = nowDay;
+                fetchHebrewDateToday();
+                updateMinchaBadge();
+            }
+        }, 60000);
 
         const scrollTopBtn = document.getElementById("scrollTopBtn");
         window.onscroll = () => {
