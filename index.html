@@ -89,7 +89,185 @@
             background-position: 0 0, 0 0, 26px 45px, 26px 45px;
         }
 
-        /* =========================== TOP BAR =========================== */
+        /* =========================== ACCESSIBILITY: skip link =========================== */
+        .skip-link {
+            position: absolute;
+            top: -60px;
+            right: 1rem;
+            background: var(--wine);
+            color: #fff;
+            padding: 0.9rem 1.4rem;
+            border-radius: 0 0 12px 12px;
+            z-index: 2000;
+            font-weight: 700;
+            text-decoration: none;
+            transition: top 0.2s var(--ease);
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* =========================== ACCESSIBILITY: widget =========================== */
+        #a11y-widget {
+            position: fixed;
+            bottom: 30px;
+            left: 96px;
+            z-index: 1500;
+        }
+        @media (max-width: 768px) {
+            #a11y-widget { left: 16px; bottom: 78px; }
+        }
+        #a11y-toggle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            background: var(--ink);
+            color: var(--gold-bright);
+            font-size: 1.35rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s var(--ease);
+        }
+        #a11y-toggle:hover { background: var(--wine); transform: translateY(-3px); }
+
+        #a11y-panel {
+            position: absolute;
+            bottom: 64px;
+            left: 0;
+            width: 260px;
+            background: var(--paper);
+            border: 1px solid var(--stone-dark);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 1rem;
+            text-align: right;
+        }
+        #a11y-panel[hidden] { display: none; }
+        .a11y-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid var(--stone-dark);
+            padding-bottom: 0.6rem;
+        }
+        .a11y-panel-header h2 {
+            font-size: 1.1rem;
+            margin: 0;
+            color: var(--ink);
+        }
+        .a11y-panel-header button {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: var(--ink-soft);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .a11y-panel-header button:hover { background: var(--stone); }
+        .a11y-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .a11y-btn {
+            font-family: var(--font-body);
+            background: var(--cream);
+            border: 1px solid var(--stone-dark);
+            color: var(--ink-text);
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            text-align: right;
+            transition: all 0.25s var(--ease);
+        }
+        .a11y-btn:hover { background: var(--stone); }
+        .a11y-btn[aria-pressed="true"] {
+            background: var(--wine);
+            color: #fff;
+            border-color: var(--wine);
+        }
+        .a11y-btn.a11y-reset {
+            margin-top: 0.4rem;
+            background: transparent;
+            border-style: dashed;
+        }
+        .a11y-statement-link {
+            display: block;
+            text-align: center;
+            margin-top: 0.9rem;
+            padding-top: 0.7rem;
+            border-top: 1px solid var(--stone-dark);
+            color: var(--wine);
+            font-weight: 700;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        /* ---------- applied accessibility states (toggled on <html>) ---------- */
+        html.a11y-text-large { font-size: 112%; }
+        html.a11y-text-larger { font-size: 126%; }
+        html.a11y-text-largest { font-size: 140%; }
+
+        html.a11y-contrast body {
+            background: #000 !important;
+            color: #fff !important;
+        }
+        html.a11y-contrast .card,
+        html.a11y-contrast .calendar-container,
+        html.a11y-contrast nav,
+        html.a11y-contrast #a11y-panel,
+        html.a11y-contrast .events-panel,
+        html.a11y-contrast .events-list li,
+        html.a11y-contrast #rss-news-list li,
+        html.a11y-contrast #halacha-text,
+        html.a11y-contrast #halacha-content,
+        html.a11y-contrast #psalms-content,
+        html.a11y-contrast .zmanim-list li,
+        html.a11y-contrast .psalms-frame,
+        html.a11y-contrast .video-frame {
+            background: #000 !important;
+            color: #fff !important;
+            border-color: #ffd76a !important;
+        }
+        html.a11y-contrast a { color: #ffd76a !important; }
+        html.a11y-contrast .card-header,
+        html.a11y-contrast .calendar-header,
+        html.a11y-contrast header.hero,
+        html.a11y-contrast footer,
+        html.a11y-contrast .top-bar {
+            background: #000 !important;
+            color: #fff !important;
+            border-bottom: 1px solid #ffd76a;
+        }
+        html.a11y-contrast .zmanim-list li:hover,
+        html.a11y-contrast .events-list li:hover,
+        html.a11y-contrast #rss-news-list li:hover {
+            background: #ffd76a !important;
+            color: #000 !important;
+        }
+
+        html.a11y-grayscale { filter: grayscale(100%); }
+
+        html.a11y-underline-links a { text-decoration: underline !important; text-underline-offset: 3px; }
+
+        html.a11y-readable-font body,
+        html.a11y-readable-font h1,
+        html.a11y-readable-font h2,
+        html.a11y-readable-font h3 {
+            font-family: Arial, "Arial Hebrew", sans-serif !important;
+            letter-spacing: 0.01em;
+        }
+
+        html.a11y-stop-animations *,
+        html.a11y-stop-animations *::before,
+        html.a11y-stop-animations *::after {
+            animation: none !important;
+            transition: none !important;
+        }
         .top-bar {
             background: var(--ink);
             color: var(--stone);
@@ -782,12 +960,38 @@
 </head>
 <body>
 
+    <a href="#main-content" class="skip-link">דלג לתוכן הראשי</a>
+
+    <div id="a11y-widget">
+        <button id="a11y-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="a11y-panel" aria-label="פתח תפריט נגישות" title="נגישות">
+            <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
+        </button>
+        <div id="a11y-panel" role="dialog" aria-label="אפשרויות נגישות" hidden>
+            <div class="a11y-panel-header">
+                <h2>נגישות</h2>
+                <button id="a11y-close" aria-label="סגור תפריט נגישות">✕</button>
+            </div>
+            <div class="a11y-options">
+                <button type="button" class="a11y-btn" data-action="text-larger">א+ הגדל טקסט</button>
+                <button type="button" class="a11y-btn" data-action="text-smaller">א– הקטן טקסט</button>
+                <button type="button" class="a11y-btn" data-action="contrast" aria-pressed="false">ניגודיות גבוהה</button>
+                <button type="button" class="a11y-btn" data-action="grayscale" aria-pressed="false">גווני אפור</button>
+                <button type="button" class="a11y-btn" data-action="underline-links" aria-pressed="false">הדגשת קישורים</button>
+                <button type="button" class="a11y-btn" data-action="readable-font" aria-pressed="false">פונט קריא</button>
+                <button type="button" class="a11y-btn" data-action="stop-animations" aria-pressed="false">עצירת אנימציות</button>
+                <button type="button" class="a11y-btn a11y-reset" data-action="reset">איפוס הגדרות</button>
+            </div>
+            <a href="#accessibility-statement" class="a11y-statement-link">הצהרת נגישות</a>
+        </div>
+    </div>
+
+
     <div class="top-bar">
         <span>קהילת <strong>משכן סידב</strong> · הוד השרון</span>
         <span id="hebrew-date-today">טוען תאריך עברי…</span>
     </div>
 
-    <header class="hero">
+    <header class="hero" role="banner">
         <button class="menu-toggle" onclick="toggleMenu()" aria-label="תפריט">☰</button>
         <div class="hero-arch-frame">
             <p class="hero-eyebrow">ברוכים הבאים</p>
@@ -800,7 +1004,7 @@
         </div>
     </header>
 
-    <nav id="main-nav">
+    <nav id="main-nav" role="navigation" aria-label="ניווט ראשי">
         <a href="#prayers">זמני תפילות</a>
         <a href="#daily-halacha">הלכה יומית</a>
         <a href="#halacha-in-60-seconds">הלכה בשישים שניות</a>
@@ -816,6 +1020,7 @@
         <a href="#donate">תרומות</a>
     </nav>
 
+    <main id="main-content" role="main" tabindex="-1">
     <!-- ===================== GROUP: היום ===================== -->
     <div class="group-divider">
         <span class="divider-label">היום<span class="divider-sub">Today</span></span>
@@ -992,9 +1197,42 @@
         </div>
     </section>
 
-    <footer>
+    </main>
+
+    <section id="accessibility-statement" class="section-grid" style="grid-template-columns: 1fr; max-width: 900px;">
+        <div class="card">
+            <div class="card-header"><span class="card-icon"><i class="fa-solid fa-universal-access"></i></span><h2>הצהרת נגישות</h2></div>
+            <div class="card-body" style="text-align: right; align-items: flex-start;">
+                <p>
+                    בית הכנסת משכן סידב רואה חשיבות רבה במתן שירות שוויוני ונגיש לכלל הגולשים באתר, לרבות אנשים עם מוגבלות.
+                    האתר תוכנן ונבנה תוך מאמץ לעמוד בדרישות <strong>תקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע"ג-2013</strong>,
+                    ובהתאם לתקן הישראלי <strong>ת"י 5568</strong> לנגישות תכנים באינטרנט ברמת AA, המבוסס על הנחיות <strong>WCAG 2.0</strong> הבינלאומיות.
+                </p>
+                <p style="margin-top: 1rem;"><strong>אמצעי הנגישות באתר כוללים:</strong></p>
+                <ul style="text-align: right; padding-right: 1.3rem; line-height: 1.9;">
+                    <li>תפריט נגישות ייעודי (הכפתור הצף בפינת המסך) המאפשר הגדלת/הקטנת טקסט, ניגודיות גבוהה, גווני אפור, הדגשת קישורים, פונט קריא ועצירת אנימציות</li>
+                    <li>מבנה עמוד סמנטי עם כותרות מדורגות ואזורי ניווט מתויגים (ARIA) לתמיכה בקוראי מסך</li>
+                    <li>קישור "דלג לתוכן הראשי" עבור ניווט מקלדת</li>
+                    <li>אפשרות ניווט מלאה גם ללא עכבר, כולל אינדיקציית מיקוד (focus) ברורה</li>
+                    <li>טקסט חלופי (alt) לתמונות, ותוויות (label) לכל שדות הטפסים</li>
+                    <li>תמיכה בהעדפת "הפחתת תנועה" של מערכת ההפעלה/דפדפן</li>
+                </ul>
+                <p style="margin-top: 1rem;">
+                    <strong>הגבלות ידועות:</strong> חלק מהתכנים באתר מוטמעים ממקורות חיצוניים (כגון YouTube, Hebcal ו-tehilim.co) ואינם בשליטתנו המלאה מבחינת נגישות.
+                    אנו פועלים לשפר ככל האפשר את חוויית השימוש גם עבור רכיבים אלה.
+                </p>
+                <p style="margin-top: 1rem;">
+                    <strong>פנייה בנושא נגישות:</strong> נתקלתם בבעיה או קושי בנגישות האתר? נשמח שתפנו אלינו דרך
+                    <a href="#contact" style="color: var(--wine); font-weight: 700;">טופס יצירת הקשר</a> שבאתר, ואנו נטפל בפנייה בהקדם האפשרי.
+                </p>
+                <p style="margin-top: 1rem; color: var(--ink-soft); font-size: 0.9rem;">הצהרת נגישות זו עודכנה לאחרונה בתאריך 21.7.2026.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer role="contentinfo">
         <div class="footer-arch"></div>
-        <p>© 2024 בית כנסת משכן סידב. כל הזכויות שמורות.</p>
+        <p>© 2024 בית כנסת משכן סידב. כל הזכויות שמורות. &nbsp;·&nbsp; <a href="#accessibility-statement" style="color: var(--gold-bright); text-decoration: underline;">הצהרת נגישות</a></p>
     </footer>
 
     <button onclick="scrollToTop()" id="scrollTopBtn" aria-label="גלול למעלה">↑</button>
@@ -1006,6 +1244,118 @@
     </div>
 
     <script>
+        /* =========================== ACCESSIBILITY WIDGET =========================== */
+        (function () {
+            const STORAGE_KEY = 'mishkanSidavA11yPrefs';
+            const textLevels = ['', 'a11y-text-large', 'a11y-text-larger', 'a11y-text-largest'];
+            const defaultPrefs = {
+                textLevel: 0,
+                contrast: false,
+                grayscale: false,
+                underlineLinks: false,
+                readableFont: false,
+                stopAnimations: false
+            };
+
+            function loadPrefs() {
+                try {
+                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                    return saved ? { ...defaultPrefs, ...saved } : { ...defaultPrefs };
+                } catch {
+                    return { ...defaultPrefs };
+                }
+            }
+
+            function savePrefs(prefs) {
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs)); } catch {}
+            }
+
+            function applyPrefs(prefs) {
+                const html = document.documentElement;
+                textLevels.forEach(cls => { if (cls) html.classList.remove(cls); });
+                if (textLevels[prefs.textLevel]) html.classList.add(textLevels[prefs.textLevel]);
+
+                html.classList.toggle('a11y-contrast', prefs.contrast);
+                html.classList.toggle('a11y-grayscale', prefs.grayscale);
+                html.classList.toggle('a11y-underline-links', prefs.underlineLinks);
+                html.classList.toggle('a11y-readable-font', prefs.readableFont);
+                html.classList.toggle('a11y-stop-animations', prefs.stopAnimations);
+
+                const setPressed = (action, value) => {
+                    const btn = document.querySelector(`.a11y-btn[data-action="${action}"]`);
+                    if (btn) btn.setAttribute('aria-pressed', String(value));
+                };
+                setPressed('contrast', prefs.contrast);
+                setPressed('grayscale', prefs.grayscale);
+                setPressed('underline-links', prefs.underlineLinks);
+                setPressed('readable-font', prefs.readableFont);
+                setPressed('stop-animations', prefs.stopAnimations);
+            }
+
+            let prefs = loadPrefs();
+            applyPrefs(prefs);
+
+            const toggleBtn = document.getElementById('a11y-toggle');
+            const panel = document.getElementById('a11y-panel');
+            const closeBtn = document.getElementById('a11y-close');
+
+            function openPanel() {
+                panel.hidden = false;
+                toggleBtn.setAttribute('aria-expanded', 'true');
+                closeBtn.focus();
+            }
+            function closePanel() {
+                panel.hidden = true;
+                toggleBtn.setAttribute('aria-expanded', 'false');
+                toggleBtn.focus();
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                panel.hidden ? openPanel() : closePanel();
+            });
+            closeBtn.addEventListener('click', closePanel);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !panel.hidden) closePanel();
+            });
+            document.addEventListener('click', (e) => {
+                if (!panel.hidden && !document.getElementById('a11y-widget').contains(e.target)) closePanel();
+            });
+
+            document.querySelectorAll('.a11y-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const action = btn.dataset.action;
+                    switch (action) {
+                        case 'text-larger':
+                            prefs.textLevel = Math.min(prefs.textLevel + 1, textLevels.length - 1);
+                            break;
+                        case 'text-smaller':
+                            prefs.textLevel = Math.max(prefs.textLevel - 1, 0);
+                            break;
+                        case 'contrast':
+                            prefs.contrast = !prefs.contrast;
+                            break;
+                        case 'grayscale':
+                            prefs.grayscale = !prefs.grayscale;
+                            break;
+                        case 'underline-links':
+                            prefs.underlineLinks = !prefs.underlineLinks;
+                            break;
+                        case 'readable-font':
+                            prefs.readableFont = !prefs.readableFont;
+                            break;
+                        case 'stop-animations':
+                            prefs.stopAnimations = !prefs.stopAnimations;
+                            break;
+                        case 'reset':
+                            prefs = { ...defaultPrefs };
+                            break;
+                    }
+                    applyPrefs(prefs);
+                    savePrefs(prefs);
+                });
+            });
+        })();
+
         let currentDate = new Date();
         let events = [];
         let globalZmanimData = [];
