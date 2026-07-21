@@ -545,6 +545,64 @@
             border-color: var(--wine);
         }
 
+        /* Only the daily halachic-times list (#zmanim-list) is an expandable
+           accordion with per-item explanations; other zmanim-list usages
+           (prayer times, Shabbat times) keep the simple centered pill style
+           above untouched. */
+        #zmanim-list li {
+            display: block;
+            padding: 0;
+            overflow: hidden;
+        }
+        #zmanim-list li:hover {
+            transform: none;
+        }
+
+        .zman-toggle {
+            width: 100%;
+            background: none;
+            border: none;
+            font: inherit;
+            font-weight: 500;
+            color: inherit;
+            cursor: pointer;
+            padding: 1rem 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-align: center;
+        }
+        .zman-toggle .zman-caret {
+            font-size: 0.75em;
+            transition: transform 0.3s var(--ease);
+            opacity: 0.6;
+        }
+        .zman-toggle[aria-expanded="true"] .zman-caret { transform: rotate(180deg); }
+
+        #zmanim-list li:hover .zman-toggle,
+        .zman-toggle[aria-expanded="true"] {
+            background: var(--wine);
+            color: var(--paper);
+        }
+
+        .zman-explainer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s var(--ease), padding 0.35s var(--ease);
+            font-size: 0.88rem;
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--ink-soft);
+            text-align: right;
+            background: var(--paper);
+        }
+        .zman-explainer[data-open="true"] {
+            max-height: 220px;
+            padding: 0.9rem 1.1rem 1.1rem;
+            border-top: 1px solid var(--stone-dark);
+        }
+
         #shabbat-times-container .zmanim-list {
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             max-width: 620px;
@@ -1529,6 +1587,56 @@
         const ZMANIM_LNG = 34.8880;
         const ZMANIM_TZID = "Asia/Jerusalem";
 
+        /* Short halachic explanations shown when a person taps/clicks a zman
+           in the daily times list, keyed by the exact display name used above. */
+        const ZMAN_EXPLANATIONS = {
+            "עלות השחר": "תחילת היום ההלכתי. מרגע זה מותר ללבוש טלית ותפילין בדיעבד, ומכאן ואילך מתחילים חלק ממצוות היום, כגון תחילת זמן הצום בתעניות.",
+            "זמן טלית ותפילין (משיכיר)": "הזמן שבו האור מספיק כדי להכיר מרחוק חבר קרוב (\"משיכיר\"). מזמן זה נהוג להתעטף בטלית ולהניח תפילין לכתחילה, גם אם עוד לא הנץ החמה.",
+            "הנץ החמה": "רגע זריחת השמש. תפילת שחרית שנאמרת החל מרגע זה נקראת \"תפילה כוותיקין\", והיא מעולה במיוחד לפי חז\"ל.",
+            "סוף זמן קריאת שמע למגן אברהם": "הזמן האחרון לקריאת שמע לפי שיטת המגן אברהם, המחשב את שעות היום החל מעלות השחר ועד צאת הכוכבים.",
+            "סוף זמן קריאת שמע לגר\"א": "הזמן האחרון לקריאת שמע לפי שיטת הגר\"א (הגאון מווילנה), המחשב את שעות היום מהנץ החמה ועד השקיעה.",
+            "סוף זמן תפילה למגן אברהם": "הזמן האחרון לתפילת שחרית (עמידה) לפי שיטת המגן אברהם. לכתחילה יש להתפלל לפני זמן זה.",
+            "סוף זמן תפילה לגר\"א": "הזמן האחרון לתפילת שחרית (עמידה) לפי שיטת הגר\"א. גם מי שהתפלל אחרי זמן המגן אברהם, טוב שלא יאחר מזמן זה.",
+            "חצות היום": "האמצע המדויק בין הנץ החמה לשקיעה. זהו רגע ציון הלכתי לכמה עניינים, כגון תחילת זמן מנחה גדולה וסיום זמן אכילת חמץ בערב פסח.",
+            "מנחה גדולה": "הזמן המוקדם ביותר להתפלל תפילת מנחה - חצי שעה הלכתית לאחר חצות היום.",
+            "מנחה קטנה": "הזמן המועדף להתפלל בו מנחה לכתחילה - כשעתיים וחצי הלכתיות לפני השקיעה.",
+            "פלג המנחה": "שעה ורבע הלכתית לפני צאת הכוכבים. מפלג המנחה ואילך אפשר לקבל שבת מוקדם או להתפלל ערבית לדעות מסוימות.",
+            "שקיעה": "רגע שקיעת השמש באופק. עד רגע זה נמשך היום מדאורייתא לרוב הדעות.",
+            "צאת הכוכבים": "הזמן שבו נראים בשמים שלושה כוכבים בינוניים, ולפי רוב הדעות זהו סיום היום ההלכתי - תחילת הלילה, סיום השבת והחגים.",
+            "צאת הכוכבים (הכל)": "שיטה מחמירה יותר לצאת הכוכבים, המחכה זמן נוסף אחרי השקיעה כדי לצאת ידי כל הדעות - מתאימה למי שרוצה להחמיר, למשל בסיום צום.",
+            "צאת הכוכבים לרבינו תם": "שיטת רבינו תם, המחמירה ביותר, הממתינה כ-72 דקות קבועות אחרי השקיעה. נהוגה בעיקר להחמיר במוצאי שבת ומועדים."
+        };
+
+        function renderZmanimList(zmanimData) {
+            const zmanimList = document.getElementById("zmanim-list");
+            zmanimList.innerHTML = '';
+            zmanimData.forEach((zman, index) => {
+                const li = document.createElement("li");
+                const explainerId = `zman-explainer-${index}`;
+                const timeStr = zman.time.toLocaleTimeString('he-IL', { timeZone: 'Asia/Jerusalem', hour: '2-digit', minute: '2-digit' });
+                const explanation = ZMAN_EXPLANATIONS[zman.name] || 'אין כרגע הסבר זמין עבור זמן זה.';
+                li.innerHTML = `
+                    <button type="button" class="zman-toggle" aria-expanded="false" aria-controls="${explainerId}">
+                        <span>${zman.name}: ${timeStr}</span>
+                        <span class="zman-caret" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="zman-explainer" id="${explainerId}" data-open="false">${explanation}</div>
+                `;
+                zmanimList.appendChild(li);
+            });
+        }
+
+        /* Delegated click handler: toggles the explanation panel below whichever
+           zman was clicked, and keeps the caret/aria-expanded state in sync. */
+        document.getElementById("zmanim-list").addEventListener('click', (e) => {
+            const btn = e.target.closest('.zman-toggle');
+            if (!btn) return;
+            const explainer = document.getElementById(btn.getAttribute('aria-controls'));
+            const isOpen = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', String(!isOpen));
+            if (explainer) explainer.setAttribute('data-open', String(!isOpen));
+        });
+
         async function fetchZmanim() {
             try {
                 const today = new Date();
@@ -1572,14 +1680,8 @@
 
                 zmanimData.sort((a, b) => a.time - b.time);
 
-                const zmanimList = document.getElementById("zmanim-list");
                 if (!zmanimData.length) throw new Error("no zmanim data");
-                zmanimList.innerHTML = '';
-                zmanimData.forEach(zman => {
-                    const li = document.createElement("li");
-                    li.innerHTML = `<span>${zman.name}: ${zman.time.toLocaleTimeString('he-IL', { timeZone: 'Asia/Jerusalem', hour: '2-digit', minute: '2-digit' })}</span>`;
-                    zmanimList.appendChild(li);
-                });
+                renderZmanimList(zmanimData);
 
                 globalZmanimData = zmanimData;
                 updateNextZmanBadge();
