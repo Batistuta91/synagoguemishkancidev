@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -577,6 +578,30 @@
             max-width: 560px;
         }
         .video-frame iframe { display: block; width: 100%; height: 315px; border: 0; }
+
+        /* =========================== EMBEDDED PSALMS (tehilim.co) =========================== */
+        .psalms-frame {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--stone-dark);
+            width: 100%;
+            background: var(--paper);
+        }
+        .psalms-frame iframe {
+            display: block;
+            width: 100%;
+            height: 520px;
+            border: 0;
+        }
+        .psalms-frame-caption {
+            font-size: 0.85rem;
+            color: var(--ink-soft);
+            text-align: center;
+            padding: 0.6rem 0.8rem;
+            border-top: 1px solid var(--stone-dark);
+        }
+        .psalms-frame-caption a { color: var(--wine); font-weight: 700; text-decoration: underline; }
 
         /* =========================== FORMS =========================== */
         #contact input, #contact textarea {
@@ -1248,15 +1273,16 @@
         /* ---------- hero: today's Hebrew date (additive, non-breaking) ---------- */
         async function fetchHebrewDateToday() {
             const el = document.getElementById('hebrew-date-today');
-            if (!el) return;
             try {
                 const today = new Date();
                 const y = today.getFullYear(), m = today.getMonth() + 1, d = today.getDate();
                 const response = await fetch(`https://www.hebcal.com/converter?cfg=json&gy=${y}&gm=${m}&gd=${d}&g2h=1`);
                 const data = await response.json();
-                el.textContent = data.hebrew || '';
+                if (el) el.textContent = data.hebrew || '';
+                renderPsalmsEmbed(data.hd);
             } catch {
-                el.textContent = '';
+                if (el) el.textContent = '';
+                renderPsalmsEmbed(null);
             }
         }
         fetchHebrewDateToday();
@@ -1540,45 +1566,28 @@
 
         document.addEventListener('DOMContentLoaded', fetchHalachaIn60Seconds);
 
-        async function fetchDailyPsalms() {
-            const rssUrl = 'https://he.chabad.org/tools/rss/dailystudy_rss.xml';
-            const proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=';
-
-            try {
-                const response = await fetch(`${proxyUrl}${encodeURIComponent(rssUrl)}`);
-                const data = await response.json();
-
-                if (data.status === 'ok') {
-                    displayDailyPsalms(data.items);
-                } else {
-                    throw new Error('שגיאה בשליפת ה-RSS');
-                }
-            } catch (error) {
-                console.error('שגיאה בטעינת התהילים היומי:', error);
-                document.getElementById('psalms-content').innerHTML =
-                    '<p>שגיאה בטעינת התהילים היומי. נסה שוב מאוחר יותר.</p>';
+        /* Daily psalms are embedded directly from tehilim.co, which divides the
+           full book of Psalms by day of the Hebrew month (1-30) at predictable
+           URLs like tehilim.co/day/7/. Since tehilim.co has no public API and
+           blocks cross-origin fetch (like most WordPress sites), an <iframe>
+           embed is the reliable approach — the same technique already used
+           for the video lesson above. */
+        function renderPsalmsEmbed(hebrewDay) {
+            const container = document.getElementById('psalms-content');
+            if (!container) return;
+            if (!hebrewDay || hebrewDay < 1 || hebrewDay > 30) {
+                container.innerHTML = '<p>לא ניתן לקבוע את יום החודש העברי כרגע.</p>';
+                return;
             }
+            const url = `https://tehilim.co/day/${hebrewDay}/#oTextVowelized`;
+            const linkUrl = `https://tehilim.co/day/${hebrewDay}/`;
+            container.innerHTML = `
+                <div class="psalms-frame">
+                    <iframe src="${url}" title="תהילים יומי - יום ${hebrewDay} בחודש" loading="lazy"></iframe>
+                    <div class="psalms-frame-caption">תוכן מוטמע מאתר <a href="${linkUrl}" target="_blank" rel="noopener">tehilim.co</a> לפי יום ${hebrewDay} בחודש העברי</div>
+                </div>
+            `;
         }
-
-        function displayDailyPsalms(rssItems) {
-            const psalmsContent = document.getElementById('psalms-content');
-            psalmsContent.innerHTML = '';
-
-            const psalmsItem = rssItems.find(item => item.title.includes('Tehilim') || item.title.includes('תהילים'));
-            if (psalmsItem) {
-                psalmsContent.innerHTML = `
-                    <h3>${psalmsItem.title}</h3>
-                    <p>${psalmsItem.description}</p>
-                    <a href="${psalmsItem.link}" target="_blank">
-                        קרא עוד
-                    </a>
-                `;
-            } else {
-                psalmsContent.innerHTML = '<p>לא נמצא תוכן תהילים יומי. נסה שוב מאוחר יותר.</p>';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', fetchDailyPsalms);
 
         function checkRoshChodesh() {
             try {
