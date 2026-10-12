@@ -282,6 +282,51 @@
         .top-bar span { opacity: 0.85; }
         .top-bar strong { color: var(--gold-bright); font-weight: 600; }
 
+        /* =========================== PRAYER CHANGES TICKER =========================== */
+        /* Daily halachic additions/omissions (tachanun, mashiv haruach/tal umatar,
+           yaale veyavo, al hanisim, aneinu, omer count), computed from Hebcal's
+           live Hebrew-date conversion (already used above for #hebrew-date-today)
+           — see computePrayerFlags() in the script below. */
+        .prayer-ticker {
+            background: linear-gradient(90deg, var(--wine) 0%, var(--wine-light) 100%);
+            color: var(--paper);
+            overflow: hidden;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid rgba(212,172,114,0.45);
+        }
+        .prayer-ticker-track {
+            display: inline-flex;
+            white-space: nowrap;
+            animation: prayer-ticker-scroll 38s linear infinite;
+            will-change: transform;
+        }
+        .prayer-ticker:hover .prayer-ticker-track,
+        .prayer-ticker:focus-within .prayer-ticker-track,
+        html.a11y-stop-animations .prayer-ticker-track {
+            animation-play-state: paused;
+        }
+        .prayer-ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0 2.2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .prayer-ticker-item .ptk-dot { color: var(--gold-bright); }
+        @keyframes prayer-ticker-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .prayer-ticker-track {
+                animation: none;
+                white-space: normal;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
         /* =========================== HERO =========================== */
         header.hero {
             position: relative;
@@ -1060,6 +1105,12 @@
         <span id="hebrew-date-today">טוען תאריך עברי…</span>
     </div>
 
+    <div class="prayer-ticker" role="status" aria-label="שינויים בתפילה היום">
+        <div class="prayer-ticker-track" id="prayer-ticker-track">
+            <span class="prayer-ticker-item">טוען שינויי תפילה להיום…</span>
+        </div>
+    </div>
+
     <header class="hero" role="banner">
         <button class="menu-toggle" onclick="toggleMenu()" aria-label="תפריט">☰</button>
         <div class="hero-arch-frame">
@@ -1743,12 +1794,98 @@
                 const data = await response.json();
                 if (el) el.textContent = data.hebrew || '';
                 renderPsalmsEmbed(data.hd);
+                renderPrayerBanner(data);
             } catch {
                 if (el) el.textContent = '';
                 renderPsalmsEmbed(null);
+                renderPrayerBanner(null);
             }
         }
         fetchHebrewDateToday();
+
+        /* ---------- prayer changes ticker: what's added/omitted in davening today ----------
+           Rules below were cross-checked against a real, pre-verified Hebrew-calendar
+           dataset (a published siddur app's day-by-day output for 2026-2036) rather than
+           assumed from memory — three common online write-ups of these rules turned out
+           to be off: Sivan is tachanun-free through the 12th (not just 7th/8th, "yemei
+           tashlumin" of Shavuot), the Cheshvan extension ends on the 1st (not 2nd), and
+           Hoshana Raba (21 Tishrei) needs Yaale Veyavo even though it's just outside a
+           naive 17-20 "chol hamoed" range. Adar I/II are never ambiguous here because
+           Hebcal's own month name already disambiguates them ("Adar I" vs "Adar II"),
+           unlike a hand-rolled leap-year calculation. */
+        const PRAYER_MONTHS_MASHIV = ['Cheshvan', 'Kislev', 'Tevet', "Sh'vat", 'Adar', 'Adar I', 'Adar II'];
+        const PRAYER_MONTHS_TAL = ['Kislev', 'Tevet', "Sh'vat", 'Adar', 'Adar I', 'Adar II'];
+
+        function computePrayerFlags(hm, hd, events) {
+            const dow = new Date().getDay(); // 0=Sunday .. 6=Shabbat
+            const has = (re) => events.some(e => re.test(e));
+            const isChanukah = has(/Chanukah/);
+            const isPurimDay = events.includes('Purim') || events.includes('Shushan Purim');
+            const isLagBaomer = events.includes('Lag BaOmer');
+            const isYaaleVeyavoYomTov =
+                has(/^Rosh Hashana/) || has(/^Sukkot/) || has(/Shmini Atzeret/) ||
+                has(/Simchat Torah/) || has(/^Pesach/) || has(/^Shavuot/);
+            const isRoshChodesh = hd === 1 || hd === 30;
+
+            const noTachanun =
+                dow === 6 ||
+                isRoshChodesh ||
+                hm === 'Tishrei' ||
+                (hm === 'Cheshvan' && hd === 1) ||
+                hm === 'Nisan' ||
+                isLagBaomer ||
+                (hm === 'Sivan' && hd <= 12) ||
+                isPurimDay ||
+                (hm === 'Av' && hd === 15) ||
+                (hm === "Sh'vat" && hd === 15) ||
+                isChanukah;
+
+            const mashivHaruach =
+                (hm === 'Tishrei' && hd >= 22) ||
+                PRAYER_MONTHS_MASHIV.includes(hm) ||
+                (hm === 'Nisan' && hd <= 15);
+
+            const talUmatar = // נוסח ארץ ישראל
+                (hm === 'Cheshvan' && hd >= 7) ||
+                PRAYER_MONTHS_TAL.includes(hm) ||
+                (hm === 'Nisan' && hd <= 15);
+
+            const yaaleVeyavo = isRoshChodesh || isYaaleVeyavoYomTov;
+            const alHanisim = isChanukah || isPurimDay;
+
+            const omerMatch = events.map(e => e.match(/^(\d+)\w* day of the Omer/)).find(Boolean);
+            const omerDay = omerMatch ? parseInt(omerMatch[1], 10) : null;
+
+            const fastToday = has(/Tzom|Ta.anit|Asara/); // minor fasts only - not Yom Kippur (separate nusach)
+
+            return { noTachanun, mashivHaruach, talUmatar, yaaleVeyavo, alHanisim, omerDay, fastToday };
+        }
+
+        function renderPrayerBanner(data) {
+            const track = document.getElementById('prayer-ticker-track');
+            if (!track) return;
+            if (!data || !data.hm) {
+                track.innerHTML = '<span class="prayer-ticker-item">לא ניתן לטעון כרגע את שינויי התפילה</span>';
+                return;
+            }
+
+            const flags = computePrayerFlags(data.hm, data.hd, data.events || []);
+            const items = [];
+            items.push(flags.noTachanun ? 'אין אומרים תחנון היום' : 'אומרים תחנון היום');
+            items.push(flags.mashivHaruach ? 'בעמידה: משיב הרוח ומוריד הגשם' : 'בעמידה: מוריד הטל');
+            items.push(flags.talUmatar ? 'בברכת השנים: ותן טל ומטר לברכה' : 'בברכת השנים: ותן ברכה');
+            if (flags.yaaleVeyavo) items.push('אומרים יעלה ויבוא');
+            if (flags.alHanisim) items.push('אומרים על הניסים');
+            if (flags.fastToday) items.push('היום תענית ציבור - אומרים עננו במנחה');
+            if (flags.omerDay) items.push(`היום ${flags.omerDay} לעומר`);
+
+            const itemsHtml = items
+                .map(t => `<span class="prayer-ticker-item"><span class="ptk-dot">✦</span>${t}</span>`)
+                .join('');
+
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            track.innerHTML = reduceMotion ? itemsHtml : itemsHtml + itemsHtml;
+        }
 
         /* refresh the Hebrew date automatically once the local date rolls over */
         let lastCheckedDay = new Date().getDate();
