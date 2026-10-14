@@ -1873,7 +1873,13 @@
             const items = [];
             items.push(flags.noTachanun ? 'אין אומרים תחנון היום' : 'אומרים תחנון היום');
             items.push(flags.mashivHaruach ? 'בעמידה: משיב הרוח ומוריד הגשם' : 'בעמידה: מוריד הטל');
-            items.push(flags.talUmatar ? 'בברכת השנים: ותן טל ומטר לברכה' : 'בברכת השנים: ותן ברכה');
+            /* ברכת השנים (ברכה תשיעית בעמידה) נפתחת במילים שונות בין הנוסחים -
+               "ברך עלינו" (אשכנז) מול "ברכנו"/"ברך עלינו" (ספרד ועדות המזרח, לפי העדה) -
+               אבל סוף הברכה (ותן ברכה / ותן טל ומטר) זהה בכל הנוסחים, כך שרק
+               העונה (talUmatar) קובעת, והתווית מציגה את שתי הפתיחות בנפרד. */
+            const seasonalBlessingEnding = flags.talUmatar ? 'ותן טל ומטר לברכה' : 'ותן ברכה';
+            items.push(`ברכת השנים (אשכנז): ברך עלינו... ${seasonalBlessingEnding}`);
+            items.push(`ברכת השנים (ספרד/עדות המזרח): ברכנו - או ברך עלינו, לפי העדה... ${seasonalBlessingEnding}`);
             if (flags.yaaleVeyavo) items.push('אומרים יעלה ויבוא');
             if (flags.alHanisim) items.push('אומרים על הניסים');
             if (flags.fastToday) items.push('היום תענית ציבור - אומרים עננו במנחה');
