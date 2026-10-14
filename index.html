@@ -1893,7 +1893,31 @@
 
             const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             track.innerHTML = reduceMotion ? itemsHtml : itemsHtml + itemsHtml;
+            lastPrayerBannerData = data;
         }
+        let lastPrayerBannerData = null;
+
+        /* Mobile browsers (iOS Safari in particular) commonly drop the GPU
+           compositor layer of a long-running CSS animation once a tab sits
+           in the background for a while, and on some devices the element
+           comes back stuck off-frame (effectively invisible) instead of
+           resuming the scroll - this is what "disappears after a long time
+           on mobile" looks like. Forcing a reflow restarts the animation
+           cleanly, and re-rendering from the last known data also rebuilds
+           the element from scratch in case the issue was DOM state, not
+           just the animation. Both are cheap and use no extra network. */
+        function restartPrayerTicker() {
+            const track = document.getElementById('prayer-ticker-track');
+            if (!track) return;
+            track.style.animation = 'none';
+            void track.offsetHeight; // force reflow
+            track.style.animation = '';
+            if (lastPrayerBannerData) renderPrayerBanner(lastPrayerBannerData);
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') restartPrayerTicker();
+        });
+        setInterval(restartPrayerTicker, 10 * 60000); // periodic self-heal, every 10 minutes
 
         /* refresh the Hebrew date automatically once the local date rolls over */
         let lastCheckedDay = new Date().getDate();
