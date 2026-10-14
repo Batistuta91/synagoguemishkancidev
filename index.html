@@ -294,16 +294,20 @@
             padding: 0.65rem 0;
             border-bottom: 1px solid rgba(212,172,114,0.45);
         }
+        /* The scroll itself is driven from JS with requestAnimationFrame (see
+           setupPrayerTickerScroll() in the script below), not a CSS @keyframes
+           animation. A long-running infinite CSS animation is known to silently
+           freeze on some mobile WebKit/Chromium builds after the tab has been
+           backgrounded or under memory pressure - leaving only whichever items
+           happened to be on screen at the moment it froze, permanently stuck.
+           requestAnimationFrame recomputes the scroll position from elapsed
+           wall-clock time on every single frame, so there is no internal
+           animation state that can desync or get stuck - each frame is correct
+           on its own regardless of how long the previous one took. */
         .prayer-ticker-track {
             display: inline-flex;
             white-space: nowrap;
-            animation: prayer-ticker-scroll 38s linear infinite;
-            will-change: transform;
-        }
-        .prayer-ticker:hover .prayer-ticker-track,
-        .prayer-ticker:focus-within .prayer-ticker-track,
-        html.a11y-stop-animations .prayer-ticker-track {
-            animation-play-state: paused;
+            transform: translateX(0);
         }
         .prayer-ticker-item {
             display: inline-flex;
@@ -314,13 +318,8 @@
             font-weight: 600;
         }
         .prayer-ticker-item .ptk-dot { color: var(--gold-bright); }
-        @keyframes prayer-ticker-scroll {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
         @media (prefers-reduced-motion: reduce) {
             .prayer-ticker-track {
-                animation: none;
                 white-space: normal;
                 flex-wrap: wrap;
                 justify-content: center;
@@ -1472,6 +1471,9 @@
                     }
                     applyPrefs(prefs);
                     savePrefs(prefs);
+                    if (action === 'stop-animations' && typeof setupPrayerTickerScroll === 'function') {
+                        setupPrayerTickerScroll();
+                    }
                 });
             });
         })();
@@ -1891,33 +1893,81 @@
                 .map(t => `<span class="prayer-ticker-item"><span class="ptk-dot">✦</span>${t}</span>`)
                 .join('');
 
-            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const reduceMotion = prayerTickerReducedMotion();
             track.innerHTML = reduceMotion ? itemsHtml : itemsHtml + itemsHtml;
             lastPrayerBannerData = data;
+            setupPrayerTickerScroll();
         }
         let lastPrayerBannerData = null;
 
-        /* Mobile browsers (iOS Safari in particular) commonly drop the GPU
-           compositor layer of a long-running CSS animation once a tab sits
-           in the background for a while, and on some devices the element
-           comes back stuck off-frame (effectively invisible) instead of
-           resuming the scroll - this is what "disappears after a long time
-           on mobile" looks like. Forcing a reflow restarts the animation
-           cleanly, and re-rendering from the last known data also rebuilds
-           the element from scratch in case the issue was DOM state, not
-           just the animation. Both are cheap and use no extra network. */
-        function restartPrayerTicker() {
+        function prayerTickerReducedMotion() {
+            return (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ||
+                document.documentElement.classList.contains('a11y-stop-animations');
+        }
+
+        /* The scroll loop itself. Re-reads the track's current width every time
+           it (re)starts, so it adapts cleanly to new content and to viewport/
+           orientation changes. Position is `(elapsed wall-clock time * speed)
+           mod halfWidth`, recomputed fresh every frame - there is no running
+           total that can accumulate drift or get stuck, so even a tab that
+           sat backgrounded for hours resumes at a valid position on the very
+           next frame instead of needing a restart. */
+        let prayerTickerRAF = null;
+        let prayerTickerPaused = false;
+        const PRAYER_TICKER_PX_PER_SEC = 36;
+
+        function setupPrayerTickerScroll() {
             const track = document.getElementById('prayer-ticker-track');
             if (!track) return;
-            track.style.animation = 'none';
-            void track.offsetHeight; // force reflow
-            track.style.animation = '';
-            if (lastPrayerBannerData) renderPrayerBanner(lastPrayerBannerData);
+            if (prayerTickerRAF) { cancelAnimationFrame(prayerTickerRAF); prayerTickerRAF = null; }
+            track.style.transform = 'translateX(0)';
+            if (prayerTickerReducedMotion()) return; // CSS media query handles the static wrapped layout
+
+            const halfWidth = track.scrollWidth / 2;
+            if (!halfWidth) return;
+            const start = performance.now();
+
+            function frame(now) {
+                if (prayerTickerReducedMotion()) {
+                    track.style.transform = 'translateX(0)';
+                    prayerTickerRAF = null;
+                    return;
+                }
+                if (!prayerTickerPaused) {
+                    const elapsed = (now - start) / 1000;
+                    const offset = (elapsed * PRAYER_TICKER_PX_PER_SEC) % halfWidth;
+                    track.style.transform = `translateX(${-offset}px)`;
+                }
+                prayerTickerRAF = requestAnimationFrame(frame);
+            }
+            prayerTickerRAF = requestAnimationFrame(frame);
         }
+
+        (function () {
+            const wrap = document.querySelector('.prayer-ticker');
+            if (!wrap) return;
+            const pause = () => { prayerTickerPaused = true; };
+            const resume = () => { prayerTickerPaused = false; };
+            wrap.addEventListener('mouseenter', pause);
+            wrap.addEventListener('mouseleave', resume);
+            wrap.addEventListener('focusin', pause);
+            wrap.addEventListener('focusout', resume);
+        })();
+
+        /* Resync (not restart-from-scratch) whenever the tab regains visibility
+           or the viewport is resized/rotated - cheap, no extra network, and
+           guards against any leftover inconsistency regardless of cause. */
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') restartPrayerTicker();
+            if (document.visibilityState === 'visible') setupPrayerTickerScroll();
         });
-        setInterval(restartPrayerTicker, 10 * 60000); // periodic self-heal, every 10 minutes
+        let prayerTickerResizeTimer = null;
+        window.addEventListener('resize', () => {
+            clearTimeout(prayerTickerResizeTimer);
+            prayerTickerResizeTimer = setTimeout(setupPrayerTickerScroll, 200);
+        });
+        setInterval(() => {
+            if (lastPrayerBannerData) renderPrayerBanner(lastPrayerBannerData);
+        }, 10 * 60000); // periodic self-heal, every 10 minutes
 
         /* refresh the Hebrew date automatically once the local date rolls over */
         let lastCheckedDay = new Date().getDate();
