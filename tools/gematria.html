@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון גימטריה · משכן סידב</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="tools.css" rel="stylesheet">
+    <style>
+        .totals {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1.4rem;
+        }
+        .total {
+            background: var(--cream);
+            border: 1px solid var(--stone-dark);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .total .label { display: block; font-weight: 600; color: var(--ink-soft); font-size: 0.95rem; }
+        .total .value { display: block; font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; color: var(--wine); line-height: 1.2; }
+        .total .hint { display: block; font-size: 0.8rem; color: var(--ink-soft); }
+
+        .words { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-top: 0.5rem; }
+        .word {
+            border: 1px solid var(--stone-dark);
+            border-radius: 14px;
+            padding: 0.6rem 0.8rem;
+            background: #fff;
+            text-align: center;
+        }
+        .word .letters { display: flex; gap: 0.25rem; justify-content: center; }
+        .word .letter { display: flex; flex-direction: column; min-width: 1.8rem; }
+        .word .letter b { font-family: var(--font-display); font-size: 1.4rem; color: var(--ink); }
+        .word .letter small { color: var(--ink-soft); font-size: 0.75rem; }
+        .word .sum { margin-top: 0.3rem; font-weight: 700; color: var(--wine); border-top: 1px solid var(--stone); padding-top: 0.3rem; }
+        .empty { text-align: center; color: var(--ink-soft); }
+
+        table.values { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        table.values td { border: 1px solid var(--stone); padding: 0.3rem; text-align: center; }
+        table.values td b { font-family: var(--font-display); font-size: 1.15rem; color: var(--ink); }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="../index.html"><i class="fa-solid fa-arrow-right"></i> לאתר בית הכנסת</a>
+        <a href="index.html"><i class="fa-solid fa-table-cells-large"></i> כל הכלים והמשחקים</a>
+    </div>
+
+    <header class="page-header">
+        <p class="eyebrow">כלים שימושיים</p>
+        <h1>מחשבון גימטריה</h1>
+        <p>הקלידו מילה, שם או פסוק</p>
+    </header>
+
+    <main>
+        <div class="card">
+            <label class="field">
+                <span>טקסט בעברית</span>
+                <textarea id="gematria-input" rows="2" placeholder="לדוגמה: שלום" autofocus></textarea>
+            </label>
+            <div style="text-align:center;">
+                <button type="button" class="btn secondary" id="clear-btn">ניקוי</button>
+            </div>
+
+            <div class="totals" aria-live="polite">
+                <div class="total">
+                    <span class="label">מספר הכרחי</span>
+                    <span class="value" id="total-standard">0</span>
+                    <span class="hint">השיטה הרגילה</span>
+                </div>
+                <div class="total">
+                    <span class="label">מספר גדול</span>
+                    <span class="value" id="total-gadol">0</span>
+                    <span class="hint">אותיות סופיות: ך=500 ם=600 ן=700 ף=800 ץ=900</span>
+                </div>
+                <div class="total">
+                    <span class="label">מספר קטן</span>
+                    <span class="value" id="total-katan">0</span>
+                    <span class="hint">בלי עשרות ומאות: י=1, ק=1</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>פירוט לפי מילים (מספר הכרחי)</h2>
+            <div class="words" id="words"><p class="empty">הפירוט יופיע כאן</p></div>
+        </div>
+
+        <div class="card">
+            <h2>טבלת ערכי האותיות</h2>
+            <table class="values" id="values-table"></table>
+        </div>
+    </main>
+
+    <footer>
+        <p>בית כנסת משכן סידב · <a href="index.html">כלים ומשחקים</a> · <a href="../index.html">לאתר הראשי</a></p>
+    </footer>
+
+    <script>
+        const VALUES = {
+            'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
+            'י': 10, 'כ': 20, 'ל': 30, 'מ': 40, 'נ': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'צ': 90,
+            'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400,
+            'ך': 20, 'ם': 40, 'ן': 50, 'ף': 80, 'ץ': 90
+        };
+        const GADOL_FINALS = { 'ך': 500, 'ם': 600, 'ן': 700, 'ף': 800, 'ץ': 900 };
+
+        const standard = (ch) => VALUES[ch] || 0;
+        const gadol = (ch) => GADOL_FINALS[ch] || standard(ch);
+        // Mispar katan: drop the zeros (10→1, 200→2, 400→4).
+        const katan = (ch) => {
+            let v = standard(ch);
+            while (v >= 10) v /= 10;
+            return v;
+        };
+
+        // Remove niqqud and cantillation marks so vocalized verses work too.
+        const clean = (text) => text.replace(/[֑-ׇ]/g, '');
+
+        const input = document.getElementById('gematria-input');
+
+        function update() {
+            const text = clean(input.value);
+            const letters = [...text].filter(ch => ch in VALUES);
+            const sum = (fn) => letters.reduce((acc, ch) => acc + fn(ch), 0);
+
+            document.getElementById('total-standard').textContent = sum(standard);
+            document.getElementById('total-gadol').textContent = sum(gadol);
+            document.getElementById('total-katan').textContent = sum(katan);
+
+            const wordsBox = document.getElementById('words');
+            const words = text.split(/[^א-ת]+/).filter(Boolean);
+            if (!words.length) {
+                wordsBox.innerHTML = '<p class="empty">הפירוט יופיע כאן</p>';
+                return;
+            }
+            wordsBox.innerHTML = words.map(word => {
+                const chars = [...word];
+                const total = chars.reduce((acc, ch) => acc + standard(ch), 0);
+                return `<div class="word">
+                    <div class="letters">${chars.map(ch => `<span class="letter"><b>${ch}</b><small>${standard(ch)}</small></span>`).join('')}</div>
+                    <div class="sum">${word} = ${total}</div>
+                </div>`;
+            }).join('');
+        }
+
+        input.addEventListener('input', update);
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            input.value = '';
+            update();
+            input.focus();
+        });
+
+        // Letter value table: 22 letters in rows of 11.
+        const base = Object.keys(VALUES).slice(0, 22);
+        const rows = [base.slice(0, 11), base.slice(11)];
+        document.getElementById('values-table').innerHTML = rows.map(row =>
+            `<tr>${row.map(ch => `<td><b>${ch}</b><br>${VALUES[ch]}</td>`).join('')}</tr>`
+        ).join('');
+    </script>
+</body>
+</html>

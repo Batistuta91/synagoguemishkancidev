@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חידון יהדות · משכן סידב</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="tools.css" rel="stylesheet">
+    <style>
+        .quiz { text-align: center; }
+        .progress { color: var(--ink-soft); font-weight: 600; margin-bottom: 0.6rem; }
+        .progress-bar { height: 6px; background: var(--stone); border-radius: 999px; overflow: hidden; margin-bottom: 1.4rem; }
+        .progress-bar div { height: 100%; background: var(--gold); transition: width 0.3s var(--ease); }
+        .question { font-family: var(--font-display); font-size: 1.5rem; color: var(--ink); margin-bottom: 1.4rem; }
+        .answers { display: grid; gap: 0.7rem; }
+        .answer {
+            font: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0.85rem 1rem;
+            border-radius: 14px;
+            border: 1.5px solid var(--stone-dark);
+            background: #fff;
+            color: var(--ink);
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .answer:hover:not(:disabled) { border-color: var(--gold); background: var(--cream); }
+        .answer:disabled { cursor: default; }
+        .answer.correct { background: var(--ok); border-color: var(--ok); color: #fff; }
+        .answer.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+        .feedback { min-height: 1.8rem; margin: 1rem 0; font-weight: 700; }
+        .feedback.ok { color: var(--ok); }
+        .feedback.bad { color: var(--bad); }
+        .score { font-family: var(--font-display); font-size: 3.2rem; color: var(--wine); font-weight: 700; }
+        .result-text { font-size: 1.15rem; color: var(--ink-soft); margin: 0.5rem 0 1.5rem; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="../index.html"><i class="fa-solid fa-arrow-right"></i> לאתר בית הכנסת</a>
+        <a href="index.html"><i class="fa-solid fa-table-cells-large"></i> כל הכלים והמשחקים</a>
+    </div>
+
+    <header class="page-header">
+        <p class="eyebrow">משחקים</p>
+        <h1>חידון יהדות</h1>
+        <p>עשר שאלות בכל סבב, בכל פעם שאלות אחרות</p>
+    </header>
+
+    <main>
+        <div class="card quiz" id="quiz" aria-live="polite"></div>
+    </main>
+
+    <footer>
+        <p>בית כנסת משכן סידב · <a href="index.html">כלים ומשחקים</a> · <a href="../index.html">לאתר הראשי</a></p>
+    </footer>
+
+    <script>
+        // The first answer in each list is the correct one; answers are shuffled on display.
+        const QUESTIONS = [
+            { q: 'כמה חומשים יש בתורה?', a: ['5', '4', '7', '10'] },
+            { q: 'מהו הספר הראשון בתורה?', a: ['בראשית', 'שמות', 'דברים', 'ויקרא'] },
+            { q: 'מהו הספר האחרון בתורה?', a: ['דברים', 'במדבר', 'יהושע', 'ויקרא'] },
+            { q: 'על איזה הר ניתנה התורה?', a: ['הר סיני', 'הר המוריה', 'הר נבו', 'הר הכרמל'] },
+            { q: 'מי היה הכהן הגדול הראשון?', a: ['אהרן', 'משה', 'פנחס', 'אלעזר'] },
+            { q: 'מי מלך על ישראל אחרי שאול?', a: ['דוד', 'שלמה', 'שמואל', 'רחבעם'] },
+            { q: 'מי בנה את בית המקדש הראשון?', a: ['שלמה המלך', 'דוד המלך', 'עזרא הסופר', 'יהושע בן נון'] },
+            { q: 'כמה שבטים היו לעם ישראל?', a: ['12', '10', '7', '13'] },
+            { q: 'מי היו שלושת האבות?', a: ['אברהם, יצחק ויעקב', 'משה, אהרן ומרים', 'יעקב, יוסף ובנימין', 'אדם, נח ואברהם'] },
+            { q: 'כמה אמהות יש?', a: ['4', '3', '6', '12'] },
+            { q: 'כמה ימים נמשך חג החנוכה?', a: ['8', '7', '6', '10'] },
+            { q: 'איזו מגילה קוראים בפורים?', a: ['מגילת אסתר', 'מגילת רות', 'מגילת איכה', 'שיר השירים'] },
+            { q: 'איזו מגילה קוראים בחג השבועות?', a: ['מגילת רות', 'מגילת אסתר', 'קהלת', 'איכה'] },
+            { q: 'איזו מגילה קוראים בתשעה באב?', a: ['איכה', 'רות', 'קהלת', 'אסתר'] },
+            { q: 'באיזה חודש חל יום הכיפורים?', a: ['תשרי', 'ניסן', 'אלול', 'חשוון'] },
+            { q: 'באיזה תאריך חל ראש השנה לאילנות?', a: ['ט"ו בשבט', 'ל"ג בעומר', 'ט"ו באב', 'א\' בניסן'] },
+            { q: 'כמה ימים סופרים את ספירת העומר?', a: ['49', '50', '40', '33'] },
+            { q: 'כמה ברכות יש בתפילת העמידה של ימי חול?', a: ['19', '18', '7', '13'] },
+            { q: 'איזו ברכה מברכים על הלחם?', a: ['המוציא לחם מן הארץ', 'בורא פרי האדמה', 'בורא מיני מזונות', 'שהכל נהיה בדברו'] },
+            { q: 'איזו ברכה מברכים על פרי העץ, כמו תפוח?', a: ['בורא פרי העץ', 'בורא פרי האדמה', 'שהכל נהיה בדברו', 'בורא מיני מזונות'] },
+            { q: 'מי הוביל את עם ישראל לארץ אחרי מות משה?', a: ['יהושע בן נון', 'כלב בן יפונה', 'אהרן', 'שמואל'] },
+            { q: 'באיזה חג יושבים בסוכה?', a: ['סוכות', 'פסח', 'שבועות', 'חנוכה'] },
+            { q: 'מה אוכלים בפסח במקום לחם?', a: ['מצה', 'חלה', 'פיתה', 'עוגה'] },
+            { q: 'כמה מכות הביא ה\' על מצרים?', a: ['10', '7', '12', '40'] },
+            { q: 'כמה שנים הלכו בני ישראל במדבר?', a: ['40', '7', '70', '12'] },
+            { q: 'מה נברא ביום הראשון של בריאת העולם?', a: ['האור', 'האדם', 'בעלי החיים', 'השמש והירח'] }
+        ];
+        const ROUND_SIZE = 10;
+
+        const shuffle = (arr) => {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        };
+
+        const quiz = document.getElementById('quiz');
+        let round = [], current = 0, score = 0;
+
+        function startRound() {
+            round = shuffle(QUESTIONS).slice(0, ROUND_SIZE);
+            current = 0;
+            score = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const { q, a } = round[current];
+            const correct = a[0];
+            quiz.innerHTML = `
+                <p class="progress">שאלה ${current + 1} מתוך ${round.length} · ניקוד: ${score}</p>
+                <div class="progress-bar"><div style="width:${(current / round.length) * 100}%"></div></div>
+                <p class="question">${q}</p>
+                <div class="answers">${shuffle(a).map(ans => `<button type="button" class="answer">${ans}</button>`).join('')}</div>
+                <p class="feedback"></p>
+            `;
+            const feedback = quiz.querySelector('.feedback');
+            quiz.querySelectorAll('.answer').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const isRight = btn.textContent === correct;
+                    if (isRight) score++;
+                    quiz.querySelectorAll('.answer').forEach(b => {
+                        b.disabled = true;
+                        if (b.textContent === correct) b.classList.add('correct');
+                    });
+                    if (!isRight) btn.classList.add('wrong');
+                    feedback.className = 'feedback ' + (isRight ? 'ok' : 'bad');
+                    feedback.textContent = isRight ? 'כל הכבוד! תשובה נכונה' : `התשובה הנכונה: ${correct}`;
+
+                    const next = document.createElement('button');
+                    next.type = 'button';
+                    next.className = 'btn';
+                    next.textContent = current + 1 < round.length ? 'לשאלה הבאה' : 'לתוצאה';
+                    next.addEventListener('click', () => {
+                        current++;
+                        current < round.length ? showQuestion() : showResult();
+                    });
+                    quiz.appendChild(next);
+                    next.focus();
+                });
+            });
+        }
+
+        function showResult() {
+            const message =
+                score === round.length ? 'מושלם! תלמיד חכם אמיתי' :
+                score >= 7 ? 'יפה מאוד! ידע מרשים' :
+                score >= 4 ? 'לא רע! תמיד אפשר ללמוד עוד' :
+                'שווה לנסות שוב, וגם לבוא לשיעור בבית הכנסת';
+            quiz.innerHTML = `
+                <p class="progress">סיימתם את החידון</p>
+                <p class="score">${score} / ${round.length}</p>
+                <p class="result-text">${message}</p>
+                <button type="button" class="btn" id="again">לסבב נוסף</button>
+            `;
+            document.getElementById('again').addEventListener('click', startRound);
+        }
+
+        startRound();
+    </script>
+</body>
+</html>

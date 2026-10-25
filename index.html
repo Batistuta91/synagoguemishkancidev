@@ -464,6 +464,14 @@
             transform: translateY(-2px);
         }
 
+        /* Link to the separate tools & games area (tools/), not a section on this page. */
+        nav a.nav-tools {
+            border: 1.5px solid var(--gold);
+            color: var(--wine);
+        }
+        nav a.nav-tools i { color: var(--gold); }
+        nav a.nav-tools:hover i, nav a.nav-tools:focus-visible i { color: var(--gold-bright); }
+
         /* =========================== SECTION GROUPS =========================== */
         .group-divider {
             max-width: 900px;
@@ -1137,6 +1145,7 @@
         <a href="#gallery">גלריה</a>
         <a href="#contact">צור קשר</a>
         <a href="#donate">תרומות</a>
+        <a href="tools/index.html" class="nav-tools"><i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i> כלים ומשחקים</a>
     </nav>
 
     <main id="main-content" role="main" tabindex="-1">
