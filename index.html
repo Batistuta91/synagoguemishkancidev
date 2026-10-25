@@ -2032,43 +2032,126 @@
         fetchPrayerTimes();
         fetchDailyHalacha();
 
-        async function fetchArutz7RSS() {
-            const rssUrl = 'https://www.inn.co.il/Rss.aspx';
-            const proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=';
+        /* RSS loading with fallbacks. rss2json is a free service that sometimes
+           blocks requests (Cloudflare challenge → shows up as a CORS error), so
+           every feed tries several routes in order:
+             1. Direct fetch — for feeds whose server allows cross-origin reads
+                (inn.co.il, kikar.co.il, hidabroot.org send Access-Control-Allow-Origin: *).
+             2. rss2json.
+           and each section lists only sources that suit a synagogue site. */
+        const RSS2JSON_URL = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
+        async function fetchWithTimeout(url, ms = 8000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), ms);
             try {
-                const response = await fetch(`${proxyUrl}${encodeURIComponent(rssUrl)}`);
-                const data = await response.json();
+                const response = await fetch(url, { signal: controller.signal });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response;
+            } finally {
+                clearTimeout(timeoutId);
+            }
+        }
 
-                if (data.status === 'ok') {
-                    displayArutz7RSS(data.items);
-                } else {
-                    throw new Error('שגיאה בשליפת ה-RSS');
+        function parseRssXml(xmlText) {
+            const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+            if (doc.querySelector('parsererror')) throw new Error('XML לא תקין');
+            return [...doc.querySelectorAll('item')].map(item => ({
+                title: item.querySelector('title')?.textContent.trim() || '',
+                link: item.querySelector('link')?.textContent.trim() || '',
+                description: item.querySelector('description')?.textContent.trim() || ''
+            }));
+        }
+
+        async function loadFeedItems(source) {
+            const routes = [];
+            if (source.direct) {
+                routes.push(async () => parseRssXml(await (await fetchWithTimeout(source.url)).text()));
+            }
+            routes.push(async () => {
+                const data = await (await fetchWithTimeout(RSS2JSON_URL + encodeURIComponent(source.url))).json();
+                if (data.status !== 'ok') throw new Error(data.message || 'rss2json נכשל');
+                return data.items;
+            });
+
+            for (const route of routes) {
+                try {
+                    const items = await route();
+                    if (items && items.length) return items;
+                } catch (error) {
+                    console.warn(`[RSS] ניסיון טעינה של ${source.name} נכשל:`, error);
                 }
+            }
+            throw new Error(`לא ניתן לטעון את ${source.name}`);
+        }
+
+        async function loadFirstAvailableFeed(sources) {
+            for (const source of sources) {
+                try {
+                    return { source, items: await loadFeedItems(source) };
+                } catch (error) {
+                    console.warn('[RSS]', error.message);
+                }
+            }
+            throw new Error('כל המקורות נכשלו');
+        }
+
+        const NEWS_SOURCES = [
+            { name: 'ערוץ 7', url: 'https://www.inn.co.il/Rss.aspx', direct: true },
+            { name: 'הידברות', url: 'https://www.hidabroot.org/rss', direct: true }
+        ];
+
+        async function fetchArutz7RSS() {
+            try {
+                const { source, items } = await loadFirstAvailableFeed(NEWS_SOURCES);
+                displayArutz7RSS(items, source.name);
             } catch (error) {
-                console.error('שגיאה בטעינת עדכוני ערוץ 7:', error);
+                console.error('שגיאה בטעינת החדשות:', error);
                 document.getElementById('rss-news-list').innerHTML =
                     '<li>שגיאה בטעינת החדשות. נסה שוב מאוחר יותר.</li>';
             }
         }
 
+        /* Fallback for the daily quote when the Chabad feed is unreachable:
+           sayings from Pirkei Avot, already in Hebrew (no translation needed),
+           rotated by day of the year. */
+        const AVOT_QUOTES = [
+            { text: 'עַל שְׁלשָׁה דְבָרִים הָעוֹלָם עוֹמֵד: עַל הַתּוֹרָה וְעַל הָעֲבוֹדָה וְעַל גְּמִילוּת חֲסָדִים.', by: 'שמעון הצדיק', chapter: 'א' },
+            { text: 'הֱוֵי מִתַּלְמִידָיו שֶׁל אַהֲרֹן, אוֹהֵב שָׁלוֹם וְרוֹדֵף שָׁלוֹם, אוֹהֵב אֶת הַבְּרִיּוֹת וּמְקָרְבָן לַתּוֹרָה.', by: 'הלל', chapter: 'א' },
+            { text: 'אִם אֵין אֲנִי לִי, מִי לִי? וּכְשֶׁאֲנִי לְעַצְמִי, מָה אֲנִי? וְאִם לֹא עַכְשָׁיו, אֵימָתָי?', by: 'הלל', chapter: 'א' },
+            { text: 'עֲשֵׂה תוֹרָתְךָ קֶבַע, אֱמֹר מְעַט וַעֲשֵׂה הַרְבֵּה, וֶהֱוֵי מְקַבֵּל אֶת כָּל הָאָדָם בְּסֵבֶר פָּנִים יָפוֹת.', by: 'שמאי', chapter: 'א' },
+            { text: 'לֹא הַמִּדְרָשׁ הוּא הָעִקָּר, אֶלָּא הַמַּעֲשֶׂה.', by: 'שמעון בן רבן גמליאל', chapter: 'א' },
+            { text: 'אַל תָּדִין אֶת חֲבֵרְךָ עַד שֶׁתַּגִּיעַ לִמְקוֹמוֹ.', by: 'הלל', chapter: 'ב' },
+            { text: 'בִּמְקוֹם שֶׁאֵין אֲנָשִׁים, הִשְׁתַּדֵּל לִהְיוֹת אִישׁ.', by: 'הלל', chapter: 'ב' },
+            { text: 'יְהִי כְבוֹד חֲבֵרְךָ חָבִיב עָלֶיךָ כְּשֶׁלָּךְ.', by: 'רבי אליעזר', chapter: 'ב' },
+            { text: 'לֹא עָלֶיךָ הַמְּלָאכָה לִגְמֹר, וְלֹא אַתָּה בֶן חוֹרִין לִבָּטֵל מִמֶּנָּה.', by: 'רבי טרפון', chapter: 'ב' },
+            { text: 'אֵיזֶהוּ חָכָם? הַלּוֹמֵד מִכָּל אָדָם. אֵיזֶהוּ עָשִׁיר? הַשָּׂמֵחַ בְּחֶלְקוֹ.', by: 'בן זומא', chapter: 'ד' },
+            { text: 'הֱוֵי רָץ לְמִצְוָה קַלָּה וּבוֹרֵחַ מִן הָעֲבֵרָה, שֶׁמִּצְוָה גוֹרֶרֶת מִצְוָה, וַעֲבֵרָה גוֹרֶרֶת עֲבֵרָה.', by: 'בן עזאי', chapter: 'ד' },
+            { text: 'הֲפֹךְ בָּהּ וַהֲפֹךְ בָּהּ, דְּכֹלָּא בָהּ.', by: 'בן בג בג', chapter: 'ה' }
+        ];
+
+        function displayAvotQuote() {
+            const now = new Date();
+            const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+            const quote = AVOT_QUOTES[dayOfYear % AVOT_QUOTES.length];
+            document.getElementById('quote-content').innerHTML = `
+                <h3>מפרקי אבות</h3>
+                <p>"${quote.text}"</p>
+                <p style="margin-top:1rem; opacity:0.85; font-size:0.9em;">${quote.by} · פרקי אבות, פרק ${quote.chapter}</p>
+            `;
+        }
+
         async function fetchDailyQuote() {
-            const rssUrl = 'http://www.chabad.org/tools/rss/dailyquote_rss.xml';
-            const proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=';
-
             try {
-                const response = await fetch(`${proxyUrl}${encodeURIComponent(rssUrl)}`);
-                const data = await response.json();
-
-                if (data.status !== 'ok') throw new Error('שגיאה בטעינת ה-RSS');
-
-                const firstItem = data.items[0];
-                if (!firstItem) throw new Error('לא נמצאו פריטים ב-RSS');
-
-                displayDailyQuote(firstItem.title, firstItem.description);
+                const items = await loadFeedItems({
+                    name: 'הציטוט היומי של חב"ד',
+                    url: 'https://www.chabad.org/tools/rss/dailyquote_rss.xml',
+                    direct: false
+                });
+                displayDailyQuote(items[0].title, items[0].description);
             } catch (error) {
-                console.error('שגיאה בטעינת הציטוט היומי:', error);
-                displayDailyQuote('שגיאה', 'לא ניתן לטעון את הציטוט היומי.');
+                console.warn('הציטוט של חב"ד לא זמין, מציג ציטוט מפרקי אבות:', error);
+                displayAvotQuote();
             }
         }
 
@@ -2191,37 +2274,38 @@
             return tempDiv.textContent || tempDiv.innerText || '';
         }
 
-        function displayArutz7RSS(newsItems) {
+        function displayArutz7RSS(newsItems, sourceName) {
             const newsList = document.getElementById('rss-news-list');
             newsList.innerHTML = '';
 
             newsItems.slice(0, 5).forEach(item => {
                 const li = document.createElement('li');
+                // Arutz 7 double-escapes the HTML in its descriptions, so strip twice.
                 li.innerHTML = `
                     <a href="${item.link}" target="_blank">
                         <strong>${stripHTML(item.title)}</strong>
-                        <p>${stripHTML(item.description)}</p>
+                        <p>${stripHTML(stripHTML(item.description))}</p>
                     </a>
                 `;
                 newsList.appendChild(li);
             });
+
+            const credit = document.createElement('li');
+            credit.style.cssText = 'opacity:0.7; font-size:0.85em; list-style:none;';
+            credit.textContent = `מקור: ${sourceName}`;
+            newsList.appendChild(credit);
         }
 
         document.addEventListener('DOMContentLoaded', fetchArutz7RSS);
 
         async function fetchHalachaIn60Seconds() {
-            const rssUrl = 'https://a.kikar.co.il/v1/rss/articles/382/rss2';
-            const proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=';
-
             try {
-                const response = await fetch(`${proxyUrl}${encodeURIComponent(rssUrl)}`);
-                const data = await response.json();
-
-                if (data.status === 'ok') {
-                    displayHalacha(data.items);
-                } else {
-                    throw new Error('שגיאה בשליפת ה-RSS');
-                }
+                const items = await loadFeedItems({
+                    name: 'הלכה ב-60 שניות',
+                    url: 'https://a.kikar.co.il/v1/rss/articles/382/rss2',
+                    direct: true
+                });
+                displayHalacha(items);
             } catch (error) {
                 console.error('שגיאה בטעינת ההלכה בשישים שניות:', error);
                 document.getElementById('halacha-content').innerHTML =
@@ -2248,6 +2332,24 @@
         }
 
         document.addEventListener('DOMContentLoaded', fetchHalachaIn60Seconds);
+
+        /* Gallery: hide images that fail to load; if none load, hide the whole
+           gallery section and its nav link until real photos are uploaded. */
+        document.addEventListener('DOMContentLoaded', () => {
+            const images = [...document.querySelectorAll('.gallery-grid img')];
+            let failed = 0;
+            const onFail = (img) => {
+                img.style.display = 'none';
+                if (++failed === images.length) {
+                    document.getElementById('gallery').style.display = 'none';
+                    document.querySelectorAll('a[href="#gallery"]').forEach(a => a.style.display = 'none');
+                }
+            };
+            images.forEach(img => {
+                if (img.complete && img.naturalWidth === 0) onFail(img);
+                else img.addEventListener('error', () => onFail(img), { once: true });
+            });
+        });
 
         /* Video lesson: each page load shows a different lesson from Rabbi
            Aharon Levy's channel. The channel's "uploads" playlist (UU + the
