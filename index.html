@@ -1063,6 +1063,7 @@
                 border-radius: 12px;
             }
             nav a:hover { background: var(--wine); color: var(--paper); }
+            nav a.nav-tools { color: var(--gold-bright); }
 
             header.hero { padding: 3.5rem 1rem 6.5rem; }
             header.hero h1 { font-size: 1.9rem; }
@@ -1118,8 +1119,12 @@
         </div>
     </div>
 
+    <!-- Kept outside header.hero: the hero's `isolation: isolate` traps
+         children in its own stacking context, so the fixed button would
+         slide under the page content when scrolling. -->
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="תפריט">☰</button>
+
     <header class="hero" role="banner">
-        <button class="menu-toggle" onclick="toggleMenu()" aria-label="תפריט">☰</button>
         <div class="hero-arch-frame">
             <p class="hero-eyebrow">ברוכים הבאים</p>
             <h1>בית כנסת משכן סידב</h1>
