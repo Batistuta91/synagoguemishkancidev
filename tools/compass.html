@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מצפן לירושלים · משכן סידב</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="tools.css" rel="stylesheet">
+    <style>
+        .compass-card { text-align: center; }
+        .compass-wrap {
+            position: relative;
+            width: min(320px, 82vw);
+            aspect-ratio: 1;
+            margin: 0.5rem auto 1.2rem;
+        }
+        /* Fixed marker: the direction the top of the phone points to. */
+        .heading-marker {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 11px solid transparent;
+            border-right: 11px solid transparent;
+            border-top: 18px solid var(--wine);
+            z-index: 2;
+        }
+        .dial {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.15s linear;
+        }
+        .compass-wrap.aligned .dial circle.ring { stroke: var(--ok); }
+
+        .status {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--ink);
+            min-height: 2.2rem;
+        }
+        .status.aligned { color: var(--ok); }
+        .facts {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0 1.4rem;
+        }
+        .fact {
+            background: var(--cream);
+            border: 1px solid var(--stone-dark);
+            border-radius: 14px;
+            padding: 0.6rem 1.2rem;
+            min-width: 130px;
+        }
+        .fact .label { display: block; font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
+        .fact .value { display: block; font-family: var(--font-display); font-size: 1.5rem; color: var(--wine); font-weight: 700; }
+        .note { color: var(--ink-soft); font-size: 0.92rem; margin-top: 1rem; }
+        .card ul { padding-right: 1.2rem; color: var(--ink-soft); }
+        .card li { margin-bottom: 0.4rem; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="../index.html"><i class="fa-solid fa-arrow-right"></i> לאתר בית הכנסת</a>
+        <a href="index.html"><i class="fa-solid fa-table-cells-large"></i> כל הכלים והמשחקים</a>
+    </div>
+
+    <header class="page-header">
+        <p class="eyebrow">כלים שימושיים</p>
+        <h1>מצפן לירושלים</h1>
+        <p>לאן לפנות בתפילה</p>
+    </header>
+
+    <main>
+        <div class="card compass-card">
+            <div class="compass-wrap" id="compass-wrap">
+                <div class="heading-marker" aria-hidden="true"></div>
+                <svg class="dial" id="dial" viewBox="-110 -110 220 220" role="img" aria-label="מצפן עם חץ לכיוון ירושלים">
+                    <circle class="ring" r="104" fill="#fffdf7" stroke="#b8925a" stroke-width="3"/>
+                    <circle r="92" fill="none" stroke="#ede6d3" stroke-width="1"/>
+                    <g id="ticks" stroke="#c9bc9c"></g>
+                    <g font-family="Assistant, sans-serif" font-weight="700" font-size="15" text-anchor="middle" dominant-baseline="central">
+                        <text x="0" y="-76" fill="#6e2532">צ</text>
+                        <text x="76" y="0" fill="#1b2a4a">מז</text>
+                        <text x="0" y="76" fill="#1b2a4a">ד</text>
+                        <text x="-76" y="0" fill="#1b2a4a">מע</text>
+                    </g>
+                    <!-- Arrow to Jerusalem; rotated to the bearing inside the dial. -->
+                    <g id="jerusalem-arrow">
+                        <line x1="0" y1="18" x2="0" y2="-58" stroke="#b8925a" stroke-width="6" stroke-linecap="round"/>
+                        <polygon points="0,-88 -15,-56 15,-56" fill="#b8925a"/>
+                        <circle r="9" fill="#1b2a4a"/>
+                    </g>
+                </svg>
+            </div>
+
+            <p class="status" id="status" aria-live="polite">לחצו על הכפתור כדי להתחיל</p>
+
+            <div class="facts">
+                <div class="fact"><span class="label">כיוון לירושלים</span><span class="value" id="bearing">—</span></div>
+                <div class="fact"><span class="label">מרחק</span><span class="value" id="distance">—</span></div>
+            </div>
+
+            <button type="button" class="btn" id="start-btn"><i class="fa-solid fa-location-crosshairs"></i> הפעלת המצפן</button>
+            <p class="note" id="location-note"></p>
+        </div>
+
+        <div class="card">
+            <h2>איך משתמשים</h2>
+            <ul>
+                <li>פתחו את הדף בטלפון, לחצו על "הפעלת המצפן" ואשרו גישה למיקום ולחיישני התנועה.</li>
+                <li>החזיקו את הטלפון שטוח, מקביל לרצפה, והסתובבו עד שהחץ הזהוב מצביע אל הסימן האדום שלמעלה.</li>
+                <li>אם המצפן לא מדויק, הניעו את הטלפון בתנועת "שמונה" באוויר כדי לכייל אותו, והתרחקו ממתכות וממגנטים.</li>
+                <li>במחשב אין חיישן מצפן, ולכן יוצג רק הכיוון במעלות (0° = צפון, 90° = מזרח).</li>
+            </ul>
+            <p class="note">החץ מכוון אל הר הבית. בחוץ לארץ, ובמיוחד במקומות רחוקים, יש שיטות שונות בהלכה לגבי כיוון התפילה, ומומלץ להתייעץ עם רב.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>בית כנסת משכן סידב · <a href="index.html">כלים ומשחקים</a> · <a href="../index.html">לאתר הראשי</a></p>
+    </footer>
+
+    <script>
+        const TEMPLE_MOUNT = { lat: 31.7781, lon: 35.2354 };
+        // Used when the visitor does not share their location.
+        const SYNAGOGUE = { lat: 32.1500, lon: 34.8900, name: 'הוד השרון' };
+        const ALIGNED_TOLERANCE = 10; // degrees
+
+        const toRad = (d) => d * Math.PI / 180;
+        const toDeg = (r) => r * 180 / Math.PI;
+
+        // Initial great-circle bearing, clockwise from true north.
+        function bearingTo(from, to) {
+            const φ1 = toRad(from.lat), φ2 = toRad(to.lat), Δλ = toRad(to.lon - from.lon);
+            const y = Math.sin(Δλ) * Math.cos(φ2);
+            const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+            return (toDeg(Math.atan2(y, x)) + 360) % 360;
+        }
+
+        function distanceKm(from, to) {
+            const φ1 = toRad(from.lat), φ2 = toRad(to.lat);
+            const a = Math.sin(toRad(to.lat - from.lat) / 2) ** 2 +
+                      Math.cos(φ1) * Math.cos(φ2) * Math.sin(toRad(to.lon - from.lon) / 2) ** 2;
+            return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        function directionName(deg) {
+            const names = ['צפון', 'צפון־מזרח', 'מזרח', 'דרום־מזרח', 'דרום', 'דרום־מערב', 'מערב', 'צפון־מערב'];
+            return names[Math.round(deg / 45) % 8];
+        }
+
+        // Tick marks every 10°, longer every 30°.
+        document.getElementById('ticks').innerHTML = Array.from({ length: 36 }, (_, i) => {
+            const len = i % 3 === 0 ? 10 : 5;
+            return `<line x1="0" y1="-104" x2="0" y2="${-104 + len}" stroke-width="${i % 3 === 0 ? 2 : 1}" transform="rotate(${i * 10})"/>`;
+        }).join('');
+
+        const dial = document.getElementById('dial');
+        const arrow = document.getElementById('jerusalem-arrow');
+        const wrap = document.getElementById('compass-wrap');
+        const statusEl = document.getElementById('status');
+        const startBtn = document.getElementById('start-btn');
+
+        let targetBearing = null;
+        let dialRotation = 0; // accumulated, so the dial never spins the long way round 359°→0°
+        let hasCompass = false;
+        let compassWarning = '';
+
+        function setLocation(position, label) {
+            targetBearing = bearingTo(position, TEMPLE_MOUNT);
+            arrow.setAttribute('transform', `rotate(${targetBearing})`);
+            document.getElementById('bearing').textContent = `${Math.round(targetBearing)}°`;
+            const km = distanceKm(position, TEMPLE_MOUNT);
+            document.getElementById('distance').textContent = km < 1 ? `${Math.round(km * 1000)} מ'` : `${Math.round(km).toLocaleString('he-IL')} ק"מ`;
+            document.getElementById('location-note').textContent = label + compassWarning;
+            if (!hasCompass) {
+                statusEl.textContent = `ירושלים בכיוון ${directionName(targetBearing)} (${Math.round(targetBearing)}°)`;
+            }
+        }
+
+        function onHeading(heading) {
+            if (heading == null || isNaN(heading)) return;
+            if (!hasCompass) {
+                hasCompass = true;
+                startBtn.hidden = true;
+            }
+            const screenAngle = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+            heading = (heading + screenAngle + 360) % 360;
+
+            const target = -heading;
+            let delta = ((target - dialRotation) % 360 + 540) % 360 - 180;
+            dialRotation += delta;
+            dial.style.transform = `rotate(${dialRotation}deg)`;
+
+            if (targetBearing == null) return;
+            const off = ((targetBearing - heading) % 360 + 540) % 360 - 180;
+            const aligned = Math.abs(off) <= ALIGNED_TOLERANCE;
+            wrap.classList.toggle('aligned', aligned);
+            statusEl.classList.toggle('aligned', aligned);
+            statusEl.textContent = aligned
+                ? 'אתם פונים לירושלים'
+                : off > 0 ? 'הסתובבו ימינה' : 'הסתובבו שמאלה';
+            if (aligned && !wrap.dataset.buzzed && navigator.vibrate) {
+                navigator.vibrate(80);
+                wrap.dataset.buzzed = '1';
+            }
+            if (!aligned) delete wrap.dataset.buzzed;
+        }
+
+        function startOrientation() {
+            // iOS Safari: webkitCompassHeading is already clockwise from north.
+            const handleIOS = (e) => onHeading(e.webkitCompassHeading);
+            // Android/Chrome: absolute alpha is counter-clockwise from north.
+            const handleAbsolute = (e) => { if (e.absolute || e.type === 'deviceorientationabsolute') onHeading(360 - e.alpha); };
+
+            if ('ondeviceorientationabsolute' in window) {
+                window.addEventListener('deviceorientationabsolute', handleAbsolute);
+            } else {
+                window.addEventListener('deviceorientation', (e) => {
+                    if (typeof e.webkitCompassHeading === 'number') handleIOS(e);
+                    else handleAbsolute(e);
+                });
+            }
+
+            setTimeout(() => {
+                if (!hasCompass) {
+                    compassWarning = ' · לא נמצא חיישן מצפן במכשיר. השתמשו בכיוון במעלות עם מצפן רגיל.';
+                    document.getElementById('location-note').textContent += compassWarning;
+                }
+            }, 3000);
+        }
+
+        function startLocation() {
+            const fallback = (reason) => setLocation(SYNAGOGUE, `${reason} · מחושב לפי מיקום בית הכנסת ב${SYNAGOGUE.name}`);
+            if (!navigator.geolocation) return fallback('המיקום אינו זמין בדפדפן');
+            statusEl.textContent = 'מאתר מיקום…';
+            navigator.geolocation.getCurrentPosition(
+                (pos) => setLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude }, 'מחושב לפי המיקום הנוכחי שלכם'),
+                () => fallback('לא התקבלה הרשאה למיקום'),
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 600000 }
+            );
+        }
+
+        startBtn.addEventListener('click', async () => {
+            // iOS 13+ requires asking for motion permission from a user gesture.
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const result = await DeviceOrientationEvent.requestPermission();
+                    if (result !== 'granted') {
+                        document.getElementById('location-note').textContent = 'לא התקבלה הרשאה לחיישני התנועה.';
+                    }
+                } catch (e) { /* ignore and continue with location only */ }
+            }
+            startOrientation();
+            startLocation();
+        });
+
+        // Show the synagogue-based direction until the visitor starts the compass.
+        setLocation(SYNAGOGUE, `מחושב לפי מיקום בית הכנסת ב${SYNAGOGUE.name} · לחצו על הכפתור לחישוב לפי המיקום שלכם`);
+        statusEl.textContent = 'לחצו על הכפתור כדי להתחיל';
+    </script>
+</body>
+</html>
