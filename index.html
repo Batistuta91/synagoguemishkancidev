@@ -1218,8 +1218,9 @@
             <div class="card-header"><span class="card-icon"><i class="fa-solid fa-video"></i></span><h2>שיעורי וידאו</h2></div>
             <div class="card-body" style="align-items:center;">
                 <div class="video-frame">
-                    <iframe src="https://www.youtube.com/embed/kMiq-iCT_wg" title="שיעור וידאו" allowfullscreen></iframe>
+                    <div id="rabbi-video"><p style="padding:2rem;">טוען שיעור...</p></div>
                 </div>
+                <a href="https://www.youtube.com/@Rabbiaharonlevy" target="_blank" rel="noopener">לכל השיעורים בערוץ של הרב אהרן לוי</a>
             </div>
         </div>
     </section>
@@ -2248,12 +2249,42 @@
 
         document.addEventListener('DOMContentLoaded', fetchHalachaIn60Seconds);
 
+        /* Video lesson: each page load shows a different lesson from Rabbi
+           Aharon Levy's channel. The channel's "uploads" playlist (UU + the
+           channel id without its UC prefix) is loaded through the YouTube
+           IFrame API, and a random one of the ~200 most recent lessons is cued. */
+        const RABBI_UPLOADS_PLAYLIST = 'UUZsfOFgG1AePi0dxOygb8Ng';
+        const RABBI_RECENT_LESSONS = 200;
+
+        window.onYouTubeIframeAPIReady = function () {
+            new YT.Player('rabbi-video', {
+                width: '100%',
+                height: '315',
+                playerVars: { listType: 'playlist', list: RABBI_UPLOADS_PLAYLIST, rel: 0 },
+                events: {
+                    onReady: (e) => {
+                        e.target.getIframe().title = 'שיעור וידאו - הרב אהרן לוי';
+                        e.target.cuePlaylist({
+                            listType: 'playlist',
+                            list: RABBI_UPLOADS_PLAYLIST,
+                            index: Math.floor(Math.random() * RABBI_RECENT_LESSONS)
+                        });
+                    }
+                }
+            });
+        };
+
+        (function loadYouTubeApi() {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(tag);
+        })();
+
         /* Daily psalms are embedded directly from tehilim.co, which divides the
            full book of Psalms by day of the Hebrew month (1-30) at predictable
            URLs like tehilim.co/day/7/. Since tehilim.co has no public API and
            blocks cross-origin fetch (like most WordPress sites), an <iframe>
-           embed is the reliable approach — the same technique already used
-           for the video lesson above. */
+           embed is the reliable approach. */
         function renderPsalmsEmbed(hebrewDay) {
             const container = document.getElementById('psalms-content');
             if (!container) return;
